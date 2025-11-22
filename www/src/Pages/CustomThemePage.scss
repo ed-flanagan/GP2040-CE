@@ -709,6 +709,105 @@ $button-keycap: 19px;
 	}
 }
 
+.led-preview-stickless-16-split {
+	/* Left pinky pill button */
+	.L3 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 12.75});
+		top: $button-24mm * 2.5;
+	}
+
+	/* Left top row */
+	.Left {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 9.75});
+		top: $button-24mm;
+	}
+	.Down {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 6.5});
+		top: $button-24mm;
+	}
+	.Right {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 3.5});
+		top: $button-24mm * 2.5;
+	}
+
+	/* Left thumb buttons */
+	.L1 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 5.25});
+		top: calc(50% + #{$button-24mm * 1});
+	}
+	.Up {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% - #{$button-24mm * 2});
+		top: calc(50% + #{$button-24mm * 2});
+	}
+
+	/* Center button */
+	.A2 {
+		@include arcade-button($button-30mm, true);
+		left: 50%;
+		right: 50%;
+		top: calc(50% - #{$button-30mm * 2.5});
+	}
+	
+	/* Right top row */
+	.B3 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 3.75});
+		top: $button-24mm;
+	}
+	.B4 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 7});
+		top: 0;
+	}
+	.R1 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 10.25});
+		top: 0;
+	}
+
+	/* Right second row */
+	.B1 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 3.75});
+		top: $button-24mm * 4.25;
+	}
+	.B2 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 7});
+		top: $button-24mm * 3.25;
+	}
+	.R2 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 10.25});
+		top: $button-24mm * 3.25;
+	}
+
+	/* Right pinky pill button */
+	.R3 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 13.25});
+		top: calc(25% - #{$button-24mm * 1.75});
+	}
+
+	/* Right thumb buttons */
+	.A1 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 2});
+		top: calc(50% + #{$button-24mm * 2});
+	}
+	.L2 {
+		@include arcade-button($button-24mm, true);
+		left: calc(50% + #{$button-24mm * 5.25});
+		top: calc(50% + #{$button-24mm * 1});
+	}
+}
+
 .led-color-picker {
 	min-width: 250px;
 }
