@@ -373,13 +373,13 @@ const STICKLESS_14_LAYOUT = [
 ];
 
 const STICKLESS_16_LAYOUT = [
-	[null, 'Left', null, null],
-	['A1', 'Down', null, null],
+	[null, 'Left',  null, null],
+	['A1', 'Down',  null, null],
 	[null, 'Right', null, 'L3'],
-	['A2', 'B3', 'B1', 'Up'],
-	[null, 'B4', 'B2', 'R3'],
-	[null, 'R1', 'R2', null],
-	[null, 'L1', 'L2', null],
+	['A2', 'B3',    'B1', 'Up'],
+	[null, 'B4',    'B2', 'R3'],
+	[null, 'R1',    'R2', null],
+	[null, 'L1',    'L2', null],
 ];
 
 const KEYBOARD_LAYOUT = [
@@ -537,14 +537,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Dancepad DDR Left',
-		value: 17,
-		stickLayout: 'standard',
-		matrix: STICK_LAYOUT,
-		auxButtons: AUX_BUTTONS,
-		mainButtons: MAIN_BUTTONS,
-	},
-	{
-		label: 'Dancepad DDR SOLO',
 		value: 18,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -552,7 +544,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Dancepad DDR Right',
+		label: 'Dancepad DDR SOLO',
 		value: 19,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -560,7 +552,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: "Pop'n Music",
+		label: 'Dancepad DDR Right',
 		value: 20,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -568,8 +560,16 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Taiko',
+		label: "Pop'n Music",
 		value: 21,
+		stickLayout: 'standard',
+		matrix: STICK_LAYOUT,
+		auxButtons: AUX_BUTTONS,
+		mainButtons: MAIN_BUTTONS,
+	},
+	{
+		label: 'Taiko',
+		value: 22,
 		stickLayout: 'taiko',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -577,14 +577,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'BeatMania Turntable',
-		value: 22,
-		stickLayout: 'standard',
-		matrix: STICK_LAYOUT,
-		auxButtons: AUX_BUTTONS,
-		mainButtons: MAIN_BUTTONS,
-	},
-	{
-		label: 'BeatMania 5-Key',
 		value: 23,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -592,7 +584,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'BeatMania 7-Key',
+		label: 'BeatMania 5-Key',
 		value: 24,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -600,7 +592,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Gitadora Fret',
+		label: 'BeatMania 7-Key',
 		value: 25,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -608,7 +600,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Gitadora Strum',
+		label: 'Gitadora Fret',
 		value: 26,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -616,7 +608,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Board-Defined',
+		label: 'Gitadora Strum',
 		value: 27,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -624,7 +616,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Band Hero Fret',
+		label: 'Board-Defined',
 		value: 28,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -632,7 +624,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Band Hero Strum',
+		label: 'Band Hero Fret',
 		value: 29,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -640,7 +632,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: '6Gawd',
+		label: 'Band Hero Strum',
 		value: 30,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -648,8 +640,16 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: '6Gawd All-Button',
+		label: '6Gawd',
 		value: 31,
+		stickLayout: 'standard',
+		matrix: STICK_LAYOUT,
+		auxButtons: AUX_BUTTONS,
+		mainButtons: MAIN_BUTTONS,
+	},
+	{
+		label: '6Gawd All-Button',
+		value: 32,
 		stickLayout: 'stickless-13',
 		matrix: STICKLESS_13_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_14,
@@ -657,7 +657,7 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: '6Gawd All-Button Plus',
-		value: 32,
+		value: 33,
 		stickLayout: 'stickless-14',
 		matrix: STICKLESS_14_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_14,
@@ -665,7 +665,7 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless R16',
-		value: 33,
+		value: 34,
 		stickLayout: 'stickless-16',
 		matrix: STICKLESS_16_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_16,
@@ -673,14 +673,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt0',
-		value: 34,
-		stickLayout: 'standard',
-		matrix: STICK_LAYOUT,
-		auxButtons: AUX_BUTTONS,
-		mainButtons: MAIN_BUTTONS,
-	},
-	{
-		label: 'Board Defined Alt1',
 		value: 35,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -688,7 +680,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Board Defined Alt2',
+		label: 'Board Defined Alt1',
 		value: 36,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -696,7 +688,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Board Defined Alt3',
+		label: 'Board Defined Alt2',
 		value: 37,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -704,15 +696,15 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Board Defined Alt4',
+		label: 'Board Defined Alt3',
 		value: 38,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
 		mainButtons: MAIN_BUTTONS,
 	},
-		{
-		label: 'Board Defined Alt5',
+	{
+		label: 'Board Defined Alt4',
 		value: 39,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -720,7 +712,7 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 		{
-		label: 'Board Defined Alt6',
+		label: 'Board Defined Alt5',
 		value: 40,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
@@ -728,8 +720,16 @@ export const BUTTON_LAYOUTS = [
 		mainButtons: MAIN_BUTTONS,
 	},
 		{
-		label: 'Board Defined Alt7',
+		label: 'Board Defined Alt6',
 		value: 41,
+		stickLayout: 'standard',
+		matrix: STICK_LAYOUT,
+		auxButtons: AUX_BUTTONS,
+		mainButtons: MAIN_BUTTONS,
+	},
+		{
+		label: 'Board Defined Alt7',
+		value: 42,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
