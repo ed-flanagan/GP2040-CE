@@ -382,6 +382,20 @@ const STICKLESS_16_LAYOUT = [
 	[null, 'L1',    'L2', null],
 ];
 
+const STICKLESS_16_SPLIT_LAYOUT = [
+	[null,    'L3', null, null],
+	['Left',  null, null, null],
+	['Down',  null, null, null],
+	['Right', null, null, 'LB'],
+	[null,    null, null, 'Up'],
+	[null,    'A2', null, null],
+	[null,    null, null, 'A1'],
+	['B3',    null, 'B1', 'LT'],
+	['B4',    null, 'B2', null],
+	['RB',    null, 'RT', null],
+	[null,    'RS', null, null],
+];
+
 const KEYBOARD_LAYOUT = [
 	[null, 'Left'],
 	['Up', 'Down'],
@@ -693,6 +707,13 @@ export const BUTTON_LAYOUTS = [
 		auxButtons: AUX_BUTTONS,
 		mainButtons: MAIN_BUTTONS,
 	},
+        {
+                label: 'Stickless 16 Split',
+                stickLayout: 'stickless-16-split',
+                matrix: STICKLESS_16_SPLIT_LAYOUT,
+                auxButtons: AUX_BUTTONS_STICKLESS_16,
+                mainButtons: MAIN_BUTTONS_STICKLESS_16,
+        }
 ].map((layout, idx) => {
 	// Set value to same as the `ButtonLayout` enum value. I.e., order matters
 	// here. If proto ever breaks, this will need to be changed.
