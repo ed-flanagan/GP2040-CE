@@ -33,6 +33,7 @@ on:
           # - Granola
           # - GranolaBeacon
           # - Haute42COSMOX
+          - Haute42COSMOXC16S
           # - Haute42COSMOXMLite
           - Haute42COSMOXMUltra
           # - Haute42COSMOXXAnalog

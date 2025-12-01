@@ -101,15 +101,14 @@ LayoutManager::LayoutList LayoutManager::getLeftLayout(uint16_t index) {
             return drawOpenCore0WASDA();
         case BUTTON_LAYOUT_STICKLESS_13:
             return drawStickless13A();
-        case BUTTON_LAYOUT_STICKLESS_14:
-            return drawStickless14A();
         case BUTTON_LAYOUT_STICKLESS_16:
             return drawStickless16A();
+        case BUTTON_LAYOUT_STICKLESS_14:
+            return drawStickless14A();
         case BUTTON_LAYOUT_STICKLESS_R16:
             return drawSticklessR16A();
-        // TODO
         case BUTTON_LAYOUT_STICKLESS_16_SPLIT:
-            return drawStickless16Split();
+            return drawStickless16SplitA();
         case BUTTON_LAYOUT_DANCEPAD_DDR_LEFT:
             return drawDancepadDDRLeft();
         case BUTTON_LAYOUT_DANCEPAD_DDR_SOLO:
@@ -517,6 +516,8 @@ LayoutManager::LayoutList LayoutManager::drawSticklessButtons13B()
     return BUTTON_GROUP_STICKLESS_BUTTONS13B;
 }
 
+// Stickless 16
+
 LayoutManager::LayoutList LayoutManager::drawStickless16A()
 {
     return BUTTON_GROUP_STICKLESS16A;
@@ -526,6 +527,20 @@ LayoutManager::LayoutList LayoutManager::drawSticklessButtons16B()
 {
     return BUTTON_GROUP_STICKLESS_BUTTONS16B;
 }
+
+// Stickless 16 Split
+
+LayoutManager::LayoutList LayoutManager::drawStickless16SplitA()
+{
+    return BUTTON_GROUP_STICKLESS_16_SPLIT_A;
+}
+
+LayoutManager::LayoutList LayoutManager::drawStickless16SplitB()
+{
+    return BUTTON_GROUP_STICKLESS_16_SPLIT_B;
+}
+
+// Stickless R16
 
 LayoutManager::LayoutList LayoutManager::drawSticklessR16A()
 {
