@@ -19,58 +19,58 @@ on:
         required: false
         type: choice
         options: &brd_cfgs
-          - ARCController
-          - ASiLVLABC
-          - ASiLVLWASD
-          - BentoBox
+          # - ARCController
+          # - ASiLVLABC
+          # - ASiLVLWASD
+          # - BentoBox
           - Blank
-          - FlatboxRev4
-          - FlatboxRev5
-          - FlatboxRev5RGB
-          - FlatboxRev5Southpaw
-          - FlatboxRev5USBPassthrough
-          - FlatboxRev8
-          - Granola
-          - GranolaBeacon
-          - Haute42COSMOX
-          - Haute42COSMOXMLite
+          # - FlatboxRev4
+          # - FlatboxRev5
+          # - FlatboxRev5RGB
+          # - FlatboxRev5Southpaw
+          # - FlatboxRev5USBPassthrough
+          # - FlatboxRev8
+          # - Granola
+          # - GranolaBeacon
+          # - Haute42COSMOX
+          # - Haute42COSMOXMLite
           - Haute42COSMOXMUltra
-          - Haute42COSMOXXAnalog
-          - KB2040
-          - KeyboardConverter
-          - Liatris
-          - MavercadeRev1
-          - MavercadeRev2
-          - MavercadeRev3
-          - MiSTercadeV2
-          - OpenCore0
-          - OpenCore0MIXUP
-          - OpenCore0WASD
-          - OSUMGP-RP2040
+          # - Haute42COSMOXXAnalog
+          # - KB2040
+          # - KeyboardConverter
+          # - Liatris
+          # - MavercadeRev1
+          # - MavercadeRev2
+          # - MavercadeRev3
+          # - MiSTercadeV2
+          # - OpenCore0
+          # - OpenCore0MIXUP
+          # - OpenCore0WASD
+          # - OSUMGP-RP2040
           - Pico
-          - Pico2
-          - PicoAnn
-          - PicoFightingBoard
-          - PicoW
-          - PXPGamepad
-          - ReflexCtrlGenesis6
-          - ReflexCtrlNES
-          - ReflexCtrlSaturn
-          - ReflexCtrlSNES
-          - ReflexCtrlVB
-          - ReflexEncodeV1.2
-          - ReflexEncodeV2.0
-          - RP2040AdvancedBreakoutBoard
-          - RP2040AdvancedBreakoutBoardUSBPassthrough
-          - RP2040MiniBreakoutBoard
-          - RP2040MiniBreakoutBoardUSBPassthrough
-          - SeeedXIAORP2040
-          - SGFDevices
-          - SparkFunProMicro
-          - SparkFunProMicroRP2350
-          - Stress
-          - WaveshareZero
-          - ZeroRhythm
+          # - Pico2
+          # - PicoAnn
+          # - PicoFightingBoard
+          # - PicoW
+          # - PXPGamepad
+          # - ReflexCtrlGenesis6
+          # - ReflexCtrlNES
+          # - ReflexCtrlSaturn
+          # - ReflexCtrlSNES
+          # - ReflexCtrlVB
+          # - ReflexEncodeV1.2
+          # - ReflexEncodeV2.0
+          # - RP2040AdvancedBreakoutBoard
+          # - RP2040AdvancedBreakoutBoardUSBPassthrough
+          # - RP2040MiniBreakoutBoard
+          # - RP2040MiniBreakoutBoardUSBPassthrough
+          # - SeeedXIAORP2040
+          # - SGFDevices
+          # - SparkFunProMicro
+          # - SparkFunProMicroRP2350
+          # - Stress
+          # - WaveshareZero
+          # - ZeroRhythm
 
 jobs:
   fsdata:
@@ -104,7 +104,8 @@ jobs:
     needs: [fsdata]
 
     strategy:
-      fail-fast: false
+      # fail-fast: false
+      fail-fast: true
       matrix:
         board_config: *brd_cfgs
         os:
