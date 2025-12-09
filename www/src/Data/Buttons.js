@@ -401,7 +401,6 @@ export const DPAD_MASKS = [
 export const BUTTON_LAYOUTS = [
 	{
 		label: 'Stick',
-		value: 0,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -409,7 +408,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless',
-		value: 1,
 		stickLayout: 'stickless',
 		matrix: STICKLESS_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -417,7 +415,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Buttons Angled',
-		value: 2,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -425,7 +422,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Buttons Basic',
-		value: 3,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -433,7 +429,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Keyboard Angled',
-		value: 4,
 		stickLayout: 'keyboard',
 		matrix: KEYBOARD_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -441,7 +436,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Keyboard',
-		value: 5,
 		stickLayout: 'keyboard',
 		matrix: KEYBOARD_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -449,7 +443,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Dancepad',
-		value: 6,
 		stickLayout: 'keyboard',
 		matrix: STICKLESS_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -457,7 +450,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Twin Stick',
-		value: 7,
 		stickLayout: 'standard',
 		matrix: STICKLESS_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -465,7 +457,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Blank',
-		value: 8,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -473,7 +464,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Vewlix',
-		value: 9,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -481,7 +471,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Fightboard Stick',
-		value: 10,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -489,7 +478,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Fightboard Mirrored',
-		value: 11,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -497,7 +485,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Custom',
-		value: 12,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -505,7 +492,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'OpenCore0 WASD',
-		value: 13,
 		stickLayout: 'keyboard',
 		matrix: KEYBOARD_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -513,7 +499,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless 13',
-		value: 14,
 		stickLayout: 'stickless-13',
 		matrix: STICKLESS_13_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_13,
@@ -521,7 +506,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless 16',
-		value: 15,
 		stickLayout: 'stickless-16',
 		matrix: STICKLESS_16_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_16,
@@ -529,7 +513,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless 14',
-		value: 16,
 		stickLayout: 'stickless-14',
 		matrix: STICKLESS_14_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_14,
@@ -537,7 +520,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Dancepad DDR Left',
-		value: 18,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -545,15 +527,13 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Dancepad DDR SOLO',
-		value: 19,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
 		mainButtons: MAIN_BUTTONS,
 	},
 	{
-		label: 'Dancepad DDR Right',
-		value: 20,
+		label: 'Dancepad PIU',
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -561,7 +541,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: "Pop'n Music",
-		value: 21,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -569,7 +548,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Taiko',
-		value: 22,
 		stickLayout: 'taiko',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -577,7 +555,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'BeatMania Turntable',
-		value: 23,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -585,7 +562,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'BeatMania 5-Key',
-		value: 24,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -593,7 +569,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'BeatMania 7-Key',
-		value: 25,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -601,7 +576,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Gitadora Fret',
-		value: 26,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -609,7 +583,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Gitadora Strum',
-		value: 27,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -617,7 +590,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board-Defined',
-		value: 28,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -625,7 +597,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Band Hero Fret',
-		value: 29,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -633,7 +604,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Band Hero Strum',
-		value: 30,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -641,7 +611,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: '6Gawd',
-		value: 31,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -649,7 +618,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: '6Gawd All-Button',
-		value: 32,
 		stickLayout: 'stickless-13',
 		matrix: STICKLESS_13_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_14,
@@ -657,7 +625,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: '6Gawd All-Button Plus',
-		value: 33,
 		stickLayout: 'stickless-14',
 		matrix: STICKLESS_14_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_14,
@@ -665,7 +632,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Stickless R16',
-		value: 34,
 		stickLayout: 'stickless-16',
 		matrix: STICKLESS_16_LAYOUT,
 		auxButtons: AUX_BUTTONS_STICKLESS_16,
@@ -673,7 +639,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt0',
-		value: 35,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -681,7 +646,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt1',
-		value: 36,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -689,7 +653,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt2',
-		value: 37,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -697,7 +660,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt3',
-		value: 38,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -705,7 +667,6 @@ export const BUTTON_LAYOUTS = [
 	},
 	{
 		label: 'Board Defined Alt4',
-		value: 39,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -713,7 +674,6 @@ export const BUTTON_LAYOUTS = [
 	},
 		{
 		label: 'Board Defined Alt5',
-		value: 40,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
@@ -721,21 +681,28 @@ export const BUTTON_LAYOUTS = [
 	},
 		{
 		label: 'Board Defined Alt6',
-		value: 41,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
 		mainButtons: MAIN_BUTTONS,
 	},
-		{
+	{
 		label: 'Board Defined Alt7',
-		value: 42,
 		stickLayout: 'standard',
 		matrix: STICK_LAYOUT,
 		auxButtons: AUX_BUTTONS,
 		mainButtons: MAIN_BUTTONS,
 	},
-];
+].map((layout, idx) => {
+	// Set value to same as the `ButtonLayout` enum value. I.e., order matters
+	// here. If proto ever breaks, this will need to be changed.
+	// No clue if this is necessary/important -- just assuming there are
+	// historic reasons
+	// But many of the values were off-by-one. So either there's a bug, or it
+	// doesn't matter?
+	layout.value = idx
+	return layout
+});
 
 export const BUTTON_MASKS = [
 	{ label: 'B1', value: 1 << 0 },
