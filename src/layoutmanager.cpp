@@ -101,12 +101,15 @@ LayoutManager::LayoutList LayoutManager::getLeftLayout(uint16_t index) {
             return drawOpenCore0WASDA();
         case BUTTON_LAYOUT_STICKLESS_13:
             return drawStickless13A();
+        case BUTTON_LAYOUT_STICKLESS_14:
+            return drawStickless14A();
         case BUTTON_LAYOUT_STICKLESS_16:
             return drawStickless16A();
         case BUTTON_LAYOUT_STICKLESS_R16:
             return drawSticklessR16A();
-        case BUTTON_LAYOUT_STICKLESS_14:
-            return drawStickless14A();
+        // TODO
+        case BUTTON_LAYOUT_STICKLESS_16_SPLIT:
+            return drawStickless16Split();
         case BUTTON_LAYOUT_DANCEPAD_DDR_LEFT:
             return drawDancepadDDRLeft();
         case BUTTON_LAYOUT_DANCEPAD_DDR_SOLO:
