@@ -23,7 +23,7 @@ on:
           # - ASiLVLABC
           # - ASiLVLWASD
           # - BentoBox
-          - Blank
+          # - Blank
           # - FlatboxRev4
           # - FlatboxRev5
           # - FlatboxRev5RGB
@@ -35,7 +35,7 @@ on:
           # - Haute42COSMOX
           - Haute42COSMOXC16S
           # - Haute42COSMOXMLite
-          - Haute42COSMOXMUltra
+          # - Haute42COSMOXMUltra
           # - Haute42COSMOXXAnalog
           # - KB2040
           # - KeyboardConverter
@@ -48,7 +48,7 @@ on:
           # - OpenCore0MIXUP
           # - OpenCore0WASD
           # - OSUMGP-RP2040
-          - Pico
+          # - Pico
           # - Pico2
           # - PicoAnn
           # - PicoFightingBoard
