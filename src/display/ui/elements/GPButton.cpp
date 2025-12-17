@@ -39,6 +39,7 @@ void GPButton::draw() {
     GamepadButtonMapping *mapMask = NULL;
     GpioMappingInfo* pinMappings = Storage::getInstance().getProfilePinMappings();
 
+    // TODO: something to do here?
     if (_inputType == GP_ELEMENT_BTN_BUTTON) {
         // button mask
         buttonState = getProcessedGamepad()->pressedButton(this->_inputMask);

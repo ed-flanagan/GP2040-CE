@@ -582,15 +582,15 @@ enum GPElement
 {
     option (nanopb_enumopt).long_names = false;
 
-    GP_ELEMENT_WIDGET = 0;
-    GP_ELEMENT_SCREEN = 1;
+    GP_ELEMENT_WIDGET     = 0;
+    GP_ELEMENT_SCREEN     = 1;
     GP_ELEMENT_BTN_BUTTON = 2;
     GP_ELEMENT_DIR_BUTTON = 3;
     GP_ELEMENT_PIN_BUTTON = 4;
-    GP_ELEMENT_LEVER = 5;
-    GP_ELEMENT_LABEL = 6;
-    GP_ELEMENT_SPRITE = 7;
-    GP_ELEMENT_SHAPE = 8;
+    GP_ELEMENT_LEVER      = 5;
+    GP_ELEMENT_LABEL      = 6;
+    GP_ELEMENT_SPRITE     = 7;
+    GP_ELEMENT_SHAPE      = 8;
 };
 
 enum GPShape_Type
@@ -598,11 +598,11 @@ enum GPShape_Type
     option (nanopb_enumopt).long_names = false;
 
     GP_SHAPE_ELLIPSE = 0;
-    GP_SHAPE_SQUARE = 1;
-    GP_SHAPE_LINE = 2;
+    GP_SHAPE_SQUARE  = 1;
+    GP_SHAPE_LINE    = 2;
     GP_SHAPE_POLYGON = 3;
-    GP_SHAPE_ARC = 4;
-    GP_SHAPE_PILL = 5;
+    GP_SHAPE_ARC     = 4;
+    GP_SHAPE_PILL    = 5;
 };
 
 enum GPLever_Mode
