@@ -11,9 +11,9 @@
 
 #define BOARD_CONFIG_LABEL "Haute42 COSMOX C16-S"
 
-  //////////////////////
+/*//////////////////////
  // GPIO Pin Mapping //
-//////////////////////
+/////////////////// */
 
 // Main pin mapping configuration
 //
@@ -50,59 +50,60 @@
 // Turbo
 //
 #define TURBO_ENABLED 1
+
 #define GPIO_PIN_14 GpioAction::BUTTON_PRESS_TURBO
 
-  //////////////////////
+/*//////////////////////
  // Keyboard Mapping //
-//////////////////////
+/////////////////// */
 
 // Keyboard Host enabled by default
 #define KEYBOARD_HOST_ENABLED 1
 
 // Keyboard Mapping Configuration
-//                                            // GP2040 | Xinput | Switch  | PS3/4/5  | Dinput | Arcade |
-#define KEY_DPAD_UP     HID_KEY_ARROW_UP      // UP     | UP     | UP      | UP       | UP     | UP     |
-#define KEY_DPAD_DOWN   HID_KEY_ARROW_DOWN    // DOWN   | DOWN   | DOWN    | DOWN     | DOWN   | DOWN   |
-#define KEY_DPAD_RIGHT  HID_KEY_ARROW_RIGHT   // RIGHT  | RIGHT  | RIGHT   | RIGHT    | RIGHT  | RIGHT  |
-#define KEY_DPAD_LEFT   HID_KEY_ARROW_LEFT    // LEFT   | LEFT   | LEFT    | LEFT     | LEFT   | LEFT   |
-#define KEY_BUTTON_B1   HID_KEY_SHIFT_LEFT    // B1     | A      | B       | Cross    | 2      | K1     |
-#define KEY_BUTTON_B2   HID_KEY_Z             // B2     | B      | A       | Circle   | 3      | K2     |
-#define KEY_BUTTON_R2   HID_KEY_X             // R2     | RT     | ZR      | R2       | 8      | K3     |
-#define KEY_BUTTON_L2   HID_KEY_V             // L2     | LT     | ZL      | L2       | 7      | K4     |
-#define KEY_BUTTON_B3   HID_KEY_CONTROL_LEFT  // B3     | X      | Y       | Square   | 1      | P1     |
-#define KEY_BUTTON_B4   HID_KEY_ALT_LEFT      // B4     | Y      | X       | Triangle | 4      | P2     |
-#define KEY_BUTTON_R1   HID_KEY_SPACE         // R1     | RB     | R       | R1       | 6      | P3     |
-#define KEY_BUTTON_L1   HID_KEY_C             // L1     | LB     | L       | L1       | 5      | P4     |
-#define KEY_BUTTON_S1   HID_KEY_5             // S1     | Back   | Minus   | Select   | 9      | Coin   |
-#define KEY_BUTTON_S2   HID_KEY_1             // S2     | Start  | Plus    | Start    | 10     | Start  |
-#define KEY_BUTTON_L3   HID_KEY_EQUAL         // L3     | LS     | LS      | L3       | 11     | LS     |
-#define KEY_BUTTON_R3   HID_KEY_MINUS         // R3     | RS     | RS      | R3       | 12     | RS     |
-#define KEY_BUTTON_A1   HID_KEY_9             // A1     | Guide  | Home    | PS       | 13     | ~      |
-#define KEY_BUTTON_A2   HID_KEY_F2            // A2     | ~      | Capture | ~        | 14     | ~      |
-#define KEY_BUTTON_A3   HID_KEY_F3            // A3     | ~      | ~       | ~        | ~      | ~      |
-#define KEY_BUTTON_A4   HID_KEY_F4            // A4     | ~      | ~       | ~        | ~      | ~      |
-#define KEY_BUTTON_FN   -1                    // Hotkey Function                                        |
+//                                          // GP2040 | Xinput | Switch  | PS3/4/5  | Dinput | Arcade |
+#define KEY_DPAD_UP    HID_KEY_ARROW_UP     // UP     | UP     | UP      | UP       | UP     | UP     |
+#define KEY_DPAD_DOWN  HID_KEY_ARROW_DOWN   // DOWN   | DOWN   | DOWN    | DOWN     | DOWN   | DOWN   |
+#define KEY_DPAD_RIGHT HID_KEY_ARROW_RIGHT  // RIGHT  | RIGHT  | RIGHT   | RIGHT    | RIGHT  | RIGHT  |
+#define KEY_DPAD_LEFT  HID_KEY_ARROW_LEFT   // LEFT   | LEFT   | LEFT    | LEFT     | LEFT   | LEFT   |
+#define KEY_BUTTON_B1  HID_KEY_SHIFT_LEFT   // B1     | A      | B       | Cross    | 2      | K1     |
+#define KEY_BUTTON_B2  HID_KEY_Z            // B2     | B      | A       | Circle   | 3      | K2     |
+#define KEY_BUTTON_R2  HID_KEY_X            // R2     | RT     | ZR      | R2       | 8      | K3     |
+#define KEY_BUTTON_L2  HID_KEY_V            // L2     | LT     | ZL      | L2       | 7      | K4     |
+#define KEY_BUTTON_B3  HID_KEY_CONTROL_LEFT // B3     | X      | Y       | Square   | 1      | P1     |
+#define KEY_BUTTON_B4  HID_KEY_ALT_LEFT     // B4     | Y      | X       | Triangle | 4      | P2     |
+#define KEY_BUTTON_R1  HID_KEY_SPACE        // R1     | RB     | R       | R1       | 6      | P3     |
+#define KEY_BUTTON_L1  HID_KEY_C            // L1     | LB     | L       | L1       | 5      | P4     |
+#define KEY_BUTTON_S1  HID_KEY_5            // S1     | Back   | Minus   | Select   | 9      | Coin   |
+#define KEY_BUTTON_S2  HID_KEY_1            // S2     | Start  | Plus    | Start    | 10     | Start  |
+#define KEY_BUTTON_L3  HID_KEY_EQUAL        // L3     | LS     | LS      | L3       | 11     | LS     |
+#define KEY_BUTTON_R3  HID_KEY_MINUS        // R3     | RS     | RS      | R3       | 12     | RS     |
+#define KEY_BUTTON_A1  HID_KEY_9            // A1     | Guide  | Home    | PS       | 13     | ~      |
+#define KEY_BUTTON_A2  HID_KEY_F2           // A2     | ~      | Capture | ~        | 14     | ~      |
+#define KEY_BUTTON_A3  HID_KEY_F3           // A3     | ~      | ~       | ~        | ~      | ~      |
+#define KEY_BUTTON_A4  HID_KEY_F4           // A4     | ~      | ~       | ~        | ~      | ~      |
+#define KEY_BUTTON_FN  -1                   // Hotkey Function                                        |
 
-  /////////////////
+/*/////////////////
  // Input Modes //
-/////////////////
+////////////// */
 
 #define DEFAULT_INPUT_MODE_R1 INPUT_MODE_XBONE
 #define DEFAULT_INPUT_MODE_B4 INPUT_MODE_PS5
 
 #define DEFAULT_PS5AUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_USB
 
-  /////////
+/*/////////
  // USB //
-/////////
+////// */
 
-#define USB_PERIPHERAL_ENABLED 1
+#define USB_PERIPHERAL_ENABLED   1
 #define USB_PERIPHERAL_PIN_DPLUS 23
 #define USB_PERIPHERAL_PIN_ORDER 0
 
-  ///////////////////
+/*///////////////////
  // Button Layout //
-///////////////////
+//////////////// */
 
 #define BUTTON_LAYOUT       BUTTON_LAYOUT_BOARD_DEFINED_A
 #define BUTTON_LAYOUT_RIGHT BUTTON_LAYOUT_BOARD_DEFINED_B
@@ -116,88 +117,94 @@
  * [^1]: headers/layoutmanager.h
  * [^2]: proto/enums.proto
  */
-#define DEFAULT_BOARD_LAYOUT_A {\
-    {GP_ELEMENT_PIN_BUTTON, {21, 33, 21, 24, 1, 1, 18, GP_SHAPE_PILL, 112}},\
-    {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE  }},\
-    {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE  }},\
-    {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE  }},\
-    {GP_ELEMENT_PIN_BUTTON, {48, 44, 4,  4,  1, 1, 13, GP_SHAPE_ELLIPSE  }},\
-    {GP_ELEMENT_DIR_BUTTON, {55, 53, 56, 47, 1, 1, 2,  GP_SHAPE_PILL, 135}}\
+// clang-format off
+#define DEFAULT_BOARD_LAYOUT_A                                                \
+{                                                                             \
+    {GP_ELEMENT_PIN_BUTTON, {21, 33, 21, 24, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
+    {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_PIN_BUTTON, {48, 44, 4,  4,  1, 1, 13, GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_DIR_BUTTON, {55, 53, 56, 47, 1, 1, 2,  GP_SHAPE_PILL, 135}},  \
 }
 
-#define DEFAULT_BOARD_LAYOUT_B {\
-    {GP_ELEMENT_PIN_BUTTON, {63,  31, 5,   5,  1, 1, 26, GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {74,  25, 4,   4,  1, 1, 10, GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {83,  20, 4,   4,  1, 1, 11, GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {94,  20, 4,   4,  1, 1, 12, GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {74,  35, 4,   4,  1, 1, 6,  GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {83,  30, 4,   4,  1, 1, 7,  GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {94,  30, 4,   4,  1, 1, 8,  GP_SHAPE_ELLIPSE }},\
-    {GP_ELEMENT_PIN_BUTTON, {104, 33, 104, 24, 1, 1, 19, GP_SHAPE_PILL, 68}},\
-    {GP_ELEMENT_PIN_BUTTON, {71,  53, 71,  47, 1, 1, 27, GP_SHAPE_PILL, 45}},\
-    {GP_ELEMENT_PIN_BUTTON, {79,  44, 4,   4,  1, 1, 9,  GP_SHAPE_ELLIPSE }}\
+#define DEFAULT_BOARD_LAYOUT_B                                                \
+{\
+    {GP_ELEMENT_PIN_BUTTON, {63,  31, 5,   5,  1, 1, 26, GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {74,  25, 4,   4,  1, 1, 10, GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {83,  20, 4,   4,  1, 1, 11, GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {94,  20, 4,   4,  1, 1, 12, GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {74,  35, 4,   4,  1, 1, 6,  GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {83,  30, 4,   4,  1, 1, 7,  GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {94,  30, 4,   4,  1, 1, 8,  GP_SHAPE_ELLIPSE}},  \
+    {GP_ELEMENT_PIN_BUTTON, {104, 33, 104, 24, 1, 1, 19, GP_SHAPE_PILL, 68}}, \
+    {GP_ELEMENT_PIN_BUTTON, {71,  53, 71,  47, 1, 1, 27, GP_SHAPE_PILL, 45}}, \
+    {GP_ELEMENT_PIN_BUTTON, {79,  44, 4,   4,  1, 1, 9,  GP_SHAPE_ELLIPSE}},  \
 }
+// clang-format on
 
-  //////////
+/*//////////
  // LEDs //
-//////////
+/////// */
 
-// Button LED config
+// Config
 //
-#define BOARD_LED_ENABLED 1
-#define BOARD_LED_TYPE ON_BOARD_LED_MODE_MODE_INDICATOR
-#define BOARD_LEDS_PIN 28
-#define LED_BRIGHTNESS_MAXIMUM 200
-#define LED_BRIGHTNESS_STEPS 5
-#define LED_FORMAT LED_FORMAT_GRB
+#define BOARD_LED_ENABLED         1
+#define BOARD_LED_TYPE            ON_BOARD_LED_MODE_MODE_INDICATOR
+#define BOARD_LEDS_PIN            28
+#define LED_BRIGHTNESS_MAXIMUM    200
+#define LED_BRIGHTNESS_STEPS      5
+#define LED_FORMAT                LED_FORMAT_GRB
 #define LEDS_BASE_ANIMATION_INDEX 1
-#define LEDS_BRIGHTNESS 200
-#define LEDS_PER_PIXEL 1
+#define LEDS_BRIGHTNESS           200
+#define LEDS_PER_PIXEL            1
 
-// Buton LED enum
+// Enum
 //
-#define LEDS_DPAD_UP     0
-#define LEDS_DPAD_DOWN   1
-#define LEDS_DPAD_RIGHT  2
-#define LEDS_DPAD_LEFT   3
-#define LEDS_BUTTON_B1   4
-#define LEDS_BUTTON_B2   5
-#define LEDS_BUTTON_R2   6
-#define LEDS_BUTTON_L2   7
-#define LEDS_BUTTON_B3   8
-#define LEDS_BUTTON_B4   9
-#define LEDS_BUTTON_R1   10
-#define LEDS_BUTTON_L1   11
-#define LEDS_BUTTON_L3   12
-#define LEDS_BUTTON_R3   13
-#define LEDS_BUTTON_A1   14
-#define LEDS_BUTTON_A2   15
-#define LEDS_BUTTON_26   16
-#define LEDS_BUTTON_27   17
+#define LEDS_DPAD_UP    0
+#define LEDS_DPAD_DOWN  1
+#define LEDS_DPAD_RIGHT 2
+#define LEDS_DPAD_LEFT  3
+#define LEDS_BUTTON_B1  4
+#define LEDS_BUTTON_B2  5
+#define LEDS_BUTTON_R2  6
+#define LEDS_BUTTON_L2  7
+#define LEDS_BUTTON_B3  8
+#define LEDS_BUTTON_B4  9
+#define LEDS_BUTTON_R1  10
+#define LEDS_BUTTON_L1  11
+#define LEDS_BUTTON_L3  12
+#define LEDS_BUTTON_R3  13
+#define LEDS_BUTTON_A1  14
+#define LEDS_BUTTON_A2  15
+#define LEDS_BUTTON_26  16
+#define LEDS_BUTTON_27  17
 
 // Ambient lighting
 //
-#define CASE_RGB_TYPE CASE_RGB_TYPE_AMBIENT
+#define CASE_RGB_TYPE  CASE_RGB_TYPE_AMBIENT
 #define CASE_RGB_INDEX 16
 #define CASE_RGB_COUNT 30
+
 #define AMBIENT_LIGHT_EFFECT AL_CUSTOM_EFFECT_GRADIENT
 #define AMBIENT_STATIC_COLOR ANIMATION_COLOR_PURPLE
 
-  /////////////////
+/*/////////////////
  // I2C Display //
-/////////////////
+////////////// */
 
 // Config
 //
 #define HAS_I2C_DISPLAY 1
-#define I2C0_ENABLED 1
-#define I2C0_PIN_SDA 0
-#define I2C0_PIN_SCL 1
-#define SPLASH_MODE SPLASH_MODE_STATIC
+#define I2C0_ENABLED    1
+#define I2C0_PIN_SDA    0
+#define I2C0_PIN_SCL    1
+#define SPLASH_MODE     SPLASH_MODE_STATIC
 #define SPLASH_DURATION 3000
 
 // Default Splash
 //
+// clang-format off
 #define DEFAULT_SPLASH \
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
@@ -265,3 +272,4 @@
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
 #endif
+// clang-format on
