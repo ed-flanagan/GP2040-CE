@@ -843,10 +843,10 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDWasdFBM(std::vector
 std::vector<std::vector<Pixel>> NeoPicoLEDAddon::createLEDLayout(ButtonLayout layout, uint8_t ledsPerPixel,
                                                                  uint8_t ledButtonCount) {
     vector<vector<uint8_t>> positions(ledButtonCount);
-    for (int i = 0; i != ledButtonCount; i++) {
+    for (uint8_t i = 0; i < ledButtonCount; i++) {
         positions[i].resize(ledsPerPixel);
-        for (int l = 0; l != ledsPerPixel; l++) {
-            positions[i][l] = (i * ledsPerPixel) + l;
+        for (uint8_t j = 0; j < ledsPerPixel; j++) {
+            positions[i][j] = (i * ledsPerPixel) + j;
         }
     }
 
