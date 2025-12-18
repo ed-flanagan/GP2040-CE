@@ -175,7 +175,7 @@ LayoutManager::LayoutList LayoutManager::getRightLayout(uint16_t index) {
 }
 
 LayoutManager::LayoutList LayoutManager::drawButtonLayoutLeft() {
-    ButtonLayoutParamsLeft leftOptionss =
+    ButtonLayoutParamsLeft leftOptions =
         Storage::getInstance().getDisplayOptions().buttonLayoutCustomOptions.paramsLeft;
     return adjustByCustomSettings(getLeftLayout(leftOptions.layout), leftOptions.common);
 }
