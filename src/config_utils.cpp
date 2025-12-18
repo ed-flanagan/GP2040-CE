@@ -2,40 +2,40 @@
 
 #include "config.pb.h"
 #include "enums.pb.h"
-#include "pb_encode.h"
-#include "pb_decode.h"
 #include "pb_common.h"
+#include "pb_decode.h"
+#include "pb_encode.h"
 #include "types.h"
 
 #include "BoardConfig.h"
 #include "GamepadConfig.h"
-#include "version.h"
 #include "addons/analog.h"
 #include "addons/board_led.h"
 #include "addons/bootsel_button.h"
 #include "addons/buzzerspeaker.h"
-#include "addons/dualdirectional.h"
-#include "addons/tilt.h"
-#include "addons/focus_mode.h"
-#include "addons/i2canalog1219.h"
 #include "addons/display.h"
+#include "addons/drv8833_rumble.h"
+#include "addons/dualdirectional.h"
+#include "addons/focus_mode.h"
+#include "addons/gamepad_usb_host.h"
+#include "addons/he_trigger.h"
+#include "addons/i2c_gpio_pcf8575.h"
+#include "addons/i2canalog1219.h"
+#include "addons/input_macro.h"
 #include "addons/keyboard_host.h"
 #include "addons/neopicoleds.h"
 #include "addons/pleds.h"
 #include "addons/reactiveleds.h"
 #include "addons/reverse.h"
+#include "addons/rotaryencoder.h"
 #include "addons/slider_socd.h"
+#include "addons/snes_input.h"
 #include "addons/spi_analog_ads1256.h"
+#include "addons/tg16_input.h"
+#include "addons/tilt.h"
 #include "addons/turbo.h"
 #include "addons/wiiext.h"
-#include "addons/snes_input.h"
-#include "addons/input_macro.h"
-#include "addons/rotaryencoder.h"
-#include "addons/i2c_gpio_pcf8575.h"
-#include "addons/drv8833_rumble.h"
-#include "addons/gamepad_usb_host.h"
-#include "addons/he_trigger.h"
-#include "addons/tg16_input.h"
+#include "version.h"
 
 #include "CRC32.h"
 #include "FlashPROM.h"
@@ -53,220 +53,217 @@
 // Default values
 // -----------------------------------------------------
 
-#define PREPROCESSOR_JOIN2(x, y) x ## y
-#define PREPROCESSOR_JOIN(x, y) PREPROCESSOR_JOIN2(x, y)
+#define PREPROCESSOR_JOIN2(x, y) x##y
+#define PREPROCESSOR_JOIN(x, y)  PREPROCESSOR_JOIN2(x, y)
 
-#define INIT_UNSET_PROPERTY(parent, property, value) \
-    if (!parent.PREPROCESSOR_JOIN(has_, property)) \
-    { \
-        parent.property = value; \
-        parent.PREPROCESSOR_JOIN(has_, property) = true; \
-    } \
+#define INIT_UNSET_PROPERTY(parent, property, value)      \
+    if (!parent.PREPROCESSOR_JOIN(has_, property)) {      \
+        parent.property                          = value; \
+        parent.PREPROCESSOR_JOIN(has_, property) = true;  \
+    }
 
-#define INIT_UNSET_PROPERTY_STR(parent, property, str) \
-    if (!parent.PREPROCESSOR_JOIN(has_, property)) \
-    { \
+#define INIT_UNSET_PROPERTY_STR(parent, property, str)          \
+    if (!parent.PREPROCESSOR_JOIN(has_, property)) {            \
         strncpy(parent.property, str, sizeof(parent.property)); \
-        parent.property[sizeof(parent.property) - 1] = '\0'; \
-        parent.PREPROCESSOR_JOIN(has_, property) = true; \
-    } \
+        parent.property[sizeof(parent.property) - 1] = '\0';    \
+        parent.PREPROCESSOR_JOIN(has_, property)     = true;    \
+    }
 
-#define INIT_UNSET_PROPERTY_BYTES(parent, property, byteArray) \
-    if (!parent.PREPROCESSOR_JOIN(has_, property)) \
-    { \
-        parent.property.size = sizeof(byteArray); \
+#define INIT_UNSET_PROPERTY_BYTES(parent, property, byteArray)                                                \
+    if (!parent.PREPROCESSOR_JOIN(has_, property)) {                                                          \
+        parent.property.size = sizeof(byteArray);                                                             \
         memcpy(parent.property.bytes, byteArray, std::min(sizeof(byteArray), sizeof(parent.property.bytes))); \
-        parent.PREPROCESSOR_JOIN(has_, property) = true; \
-    } \
+        parent.PREPROCESSOR_JOIN(has_, property) = true;                                                      \
+    }
 
 #ifndef DEFAULT_INPUT_MODE
-    #define DEFAULT_INPUT_MODE INPUT_MODE_XINPUT
+#define DEFAULT_INPUT_MODE INPUT_MODE_XINPUT
 #endif
 #ifndef DEFAULT_INPUT_MODE_B1
-    #define DEFAULT_INPUT_MODE_B1 INPUT_MODE_SWITCH
+#define DEFAULT_INPUT_MODE_B1 INPUT_MODE_SWITCH
 #endif
 #ifndef DEFAULT_INPUT_MODE_B2
-    #define DEFAULT_INPUT_MODE_B2 INPUT_MODE_XINPUT
+#define DEFAULT_INPUT_MODE_B2 INPUT_MODE_XINPUT
 #endif
 #ifndef DEFAULT_INPUT_MODE_B3
-    #define DEFAULT_INPUT_MODE_B3 INPUT_MODE_PS3
+#define DEFAULT_INPUT_MODE_B3 INPUT_MODE_PS3
 #endif
 #ifndef DEFAULT_INPUT_MODE_B4
-    #define DEFAULT_INPUT_MODE_B4 INPUT_MODE_PS4
+#define DEFAULT_INPUT_MODE_B4 INPUT_MODE_PS4
 #endif
 #ifndef DEFAULT_INPUT_MODE_L1
-    #define DEFAULT_INPUT_MODE_L1 -1
+#define DEFAULT_INPUT_MODE_L1 -1
 #endif
 #ifndef DEFAULT_INPUT_MODE_L2
-    #define DEFAULT_INPUT_MODE_L2 -1
+#define DEFAULT_INPUT_MODE_L2 -1
 #endif
 #ifndef DEFAULT_INPUT_MODE_R1
-    #define DEFAULT_INPUT_MODE_R1 -1
+#define DEFAULT_INPUT_MODE_R1 -1
 #endif
 #ifndef DEFAULT_INPUT_MODE_R2
-    #define DEFAULT_INPUT_MODE_R2 INPUT_MODE_KEYBOARD
+#define DEFAULT_INPUT_MODE_R2 INPUT_MODE_KEYBOARD
 #endif
 #ifndef DEFAULT_DPAD_MODE
-    #define DEFAULT_DPAD_MODE DPAD_MODE_DIGITAL
+#define DEFAULT_DPAD_MODE DPAD_MODE_DIGITAL
 #endif
 #ifndef DEFAULT_SOCD_MODE
-    #define DEFAULT_SOCD_MODE SOCD_MODE_NEUTRAL
+#define DEFAULT_SOCD_MODE SOCD_MODE_NEUTRAL
 #endif
 #ifndef DEFAULT_FORCED_SETUP_MODE
-    #define DEFAULT_FORCED_SETUP_MODE FORCED_SETUP_MODE_OFF
+#define DEFAULT_FORCED_SETUP_MODE FORCED_SETUP_MODE_OFF
 #endif
 #ifndef DEFAULT_LOCK_HOTKEYS
-    #define DEFAULT_LOCK_HOTKEYS false
+#define DEFAULT_LOCK_HOTKEYS false
 #endif
 #ifndef DEFAULT_PS4CONTROLLER_TYPE
-    #define DEFAULT_PS4CONTROLLER_TYPE PS4_CONTROLLER
+#define DEFAULT_PS4CONTROLLER_TYPE PS4_CONTROLLER
 #endif
 
 #ifndef DEFAULT_DEBOUNCE_DELAY
-    #define DEFAULT_DEBOUNCE_DELAY 5
+#define DEFAULT_DEBOUNCE_DELAY 5
 #endif
 
 #ifndef DEFAULT_PS4_REPORTHACK
-    #define DEFAULT_PS4_REPORTHACK false
+#define DEFAULT_PS4_REPORTHACK false
 #endif
 
 #ifndef DEFAULT_PS4AUTHENTICATION_TYPE
-    #define DEFAULT_PS4AUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
+#define DEFAULT_PS4AUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
 #endif
 
 #ifndef DEFAULT_PS5AUTHENTICATION_TYPE
-    #define DEFAULT_PS5AUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
+#define DEFAULT_PS5AUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
 #endif
 
 #ifndef DEFAULT_XINPUTAUTHENTICATION_TYPE
-    #define DEFAULT_XINPUTAUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
+#define DEFAULT_XINPUTAUTHENTICATION_TYPE INPUT_MODE_AUTH_TYPE_NONE
 #endif
 
 #ifndef DEFAULT_PS4_ID_MODE
-    #define DEFAULT_PS4_ID_MODE PS4_ID_CONSOLE
+#define DEFAULT_PS4_ID_MODE PS4_ID_CONSOLE
 #endif
 
 #ifndef DEFAULT_USB_DESC_OVERRIDE
-   #define DEFAULT_USB_DESC_OVERRIDE false
+#define DEFAULT_USB_DESC_OVERRIDE false
 #endif
 
 #ifndef DEFAULT_USB_DESC_PRODUCT
-   #define DEFAULT_USB_DESC_PRODUCT "GP2040-CE (Custom)"
+#define DEFAULT_USB_DESC_PRODUCT "GP2040-CE (Custom)"
 #endif
 
 #ifndef DEFAULT_USB_DESC_MANUFACTURER
-   #define DEFAULT_USB_DESC_MANUFACTURER "Open Stick Community"
+#define DEFAULT_USB_DESC_MANUFACTURER "Open Stick Community"
 #endif
 
 #ifndef DEFAULT_USB_DESC_VERSION
-   #define DEFAULT_USB_DESC_VERSION "1.0"
+#define DEFAULT_USB_DESC_VERSION "1.0"
 #endif
 
 #ifndef DEFAULT_USB_ID_OVERRIDE
-   #define DEFAULT_USB_ID_OVERRIDE false
+#define DEFAULT_USB_ID_OVERRIDE false
 #endif
 
 #ifndef DEFAULT_USB_VENDOR_ID
-   #define DEFAULT_USB_VENDOR_ID 0x10C4
+#define DEFAULT_USB_VENDOR_ID 0x10C4
 #endif
 
 #ifndef DEFAULT_USB_PRODUCT_ID
-   #define DEFAULT_USB_PRODUCT_ID 0x82C0
+#define DEFAULT_USB_PRODUCT_ID 0x82C0
 #endif
 
 #ifndef MINI_MENU_GAMEPAD_INPUT
-   #define MINI_MENU_GAMEPAD_INPUT 0
+#define MINI_MENU_GAMEPAD_INPUT 0
 #endif
 
 #ifndef GPIO_PIN_00
-    #define GPIO_PIN_00 GpioAction::NONE
+#define GPIO_PIN_00 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_01
-    #define GPIO_PIN_01 GpioAction::NONE
+#define GPIO_PIN_01 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_02
-    #define GPIO_PIN_02 GpioAction::NONE
+#define GPIO_PIN_02 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_03
-    #define GPIO_PIN_03 GpioAction::NONE
+#define GPIO_PIN_03 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_04
-    #define GPIO_PIN_04 GpioAction::NONE
+#define GPIO_PIN_04 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_05
-    #define GPIO_PIN_05 GpioAction::NONE
+#define GPIO_PIN_05 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_06
-    #define GPIO_PIN_06 GpioAction::NONE
+#define GPIO_PIN_06 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_07
-    #define GPIO_PIN_07 GpioAction::NONE
+#define GPIO_PIN_07 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_08
-    #define GPIO_PIN_08 GpioAction::NONE
+#define GPIO_PIN_08 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_09
-    #define GPIO_PIN_09 GpioAction::NONE
+#define GPIO_PIN_09 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_10
-    #define GPIO_PIN_10 GpioAction::NONE
+#define GPIO_PIN_10 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_11
-    #define GPIO_PIN_11 GpioAction::NONE
+#define GPIO_PIN_11 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_12
-    #define GPIO_PIN_12 GpioAction::NONE
+#define GPIO_PIN_12 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_13
-    #define GPIO_PIN_13 GpioAction::NONE
+#define GPIO_PIN_13 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_14
-    #define GPIO_PIN_14 GpioAction::NONE
+#define GPIO_PIN_14 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_15
-    #define GPIO_PIN_15 GpioAction::NONE
+#define GPIO_PIN_15 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_16
-    #define GPIO_PIN_16 GpioAction::NONE
+#define GPIO_PIN_16 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_17
-    #define GPIO_PIN_17 GpioAction::NONE
+#define GPIO_PIN_17 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_18
-    #define GPIO_PIN_18 GpioAction::NONE
+#define GPIO_PIN_18 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_19
-    #define GPIO_PIN_19 GpioAction::NONE
+#define GPIO_PIN_19 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_20
-    #define GPIO_PIN_20 GpioAction::NONE
+#define GPIO_PIN_20 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_21
-    #define GPIO_PIN_21 GpioAction::NONE
+#define GPIO_PIN_21 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_22
-    #define GPIO_PIN_22 GpioAction::NONE
+#define GPIO_PIN_22 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_23
-    #define GPIO_PIN_23 GpioAction::NONE
+#define GPIO_PIN_23 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_24
-    #define GPIO_PIN_24 GpioAction::NONE
+#define GPIO_PIN_24 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_25
-    #define GPIO_PIN_25 GpioAction::NONE
+#define GPIO_PIN_25 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_26
-    #define GPIO_PIN_26 GpioAction::NONE
+#define GPIO_PIN_26 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_27
-    #define GPIO_PIN_27 GpioAction::NONE
+#define GPIO_PIN_27 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_28
-    #define GPIO_PIN_28 GpioAction::NONE
+#define GPIO_PIN_28 GpioAction::NONE
 #endif
 #ifndef GPIO_PIN_29
-    #define GPIO_PIN_29 GpioAction::NONE
+#define GPIO_PIN_29 GpioAction::NONE
 #endif
 
 #define MAX_PROFILES (uint8_t)6
@@ -276,14 +273,13 @@
 // -----------------------------------------------------
 
 #ifndef EXTRA_BUTTON_PIN
-    #define EXTRA_BUTTON_PIN -1
+#define EXTRA_BUTTON_PIN -1
 #endif
 #ifndef EXTRA_BUTTON_MASK
-    #define EXTRA_BUTTON_MASK 0
+#define EXTRA_BUTTON_MASK 0
 #endif
 
-void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
-{
+void ConfigUtils::initUnsetPropertiesWithDefaults(Config &config) {
     const uint8_t emptyByteArray[0] = {};
 
     INIT_UNSET_PROPERTY_STR(config, boardVersion, GP2040VERSION);
@@ -322,7 +318,7 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.gamepadOptions, miniMenuGamepadInput, MINI_MENU_GAMEPAD_INPUT);
 
     // hotkeyOptions
-    HotkeyOptions& hotkeyOptions = config.hotkeyOptions;
+    HotkeyOptions &hotkeyOptions = config.hotkeyOptions;
     INIT_UNSET_PROPERTY(hotkeyOptions.hotkey01, auxMask, HOTKEY_01_AUX_MASK);
     INIT_UNSET_PROPERTY(hotkeyOptions.hotkey01, buttonsMask, HOTKEY_01_BUTTONS_MASK);
     INIT_UNSET_PROPERTY(hotkeyOptions.hotkey01, dpadMask, HOTKEY_01_DPAD_MASK);
@@ -432,14 +428,14 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.displayOptions, inputHistoryCol, INPUT_HISTORY_COL);
     INIT_UNSET_PROPERTY(config.displayOptions, inputHistoryRow, INPUT_HISTORY_ROW);
 
-    ButtonLayoutParamsLeft& paramsLeft = config.displayOptions.buttonLayoutCustomOptions.paramsLeft;
+    ButtonLayoutParamsLeft &paramsLeft = config.displayOptions.buttonLayoutCustomOptions.paramsLeft;
     INIT_UNSET_PROPERTY(paramsLeft, layout, BUTTON_LAYOUT);
     INIT_UNSET_PROPERTY(paramsLeft.common, startX, 8);
     INIT_UNSET_PROPERTY(paramsLeft.common, startY, 28);
     INIT_UNSET_PROPERTY(paramsLeft.common, buttonRadius, 8);
     INIT_UNSET_PROPERTY(paramsLeft.common, buttonPadding, 2);
 
-    ButtonLayoutParamsRight& paramsRight = config.displayOptions.buttonLayoutCustomOptions.paramsRight;
+    ButtonLayoutParamsRight &paramsRight = config.displayOptions.buttonLayoutCustomOptions.paramsRight;
     INIT_UNSET_PROPERTY(paramsRight, layout, BUTTON_LAYOUT_RIGHT);
     INIT_UNSET_PROPERTY(paramsRight.common, startX, 8);
     INIT_UNSET_PROPERTY(paramsRight.common, startY, 28);
@@ -449,7 +445,7 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.displayOptions, splashMode, SPLASH_MODE);
     INIT_UNSET_PROPERTY(config.displayOptions, splashChoice, SPLASH_CHOICE);
     INIT_UNSET_PROPERTY(config.displayOptions, splashDuration, SPLASH_DURATION);
-	const unsigned char defaultSplash[] = { DEFAULT_SPLASH };
+    const unsigned char defaultSplash[] = {DEFAULT_SPLASH};
     INIT_UNSET_PROPERTY_BYTES(config.displayOptions, splashImage, defaultSplash);
     INIT_UNSET_PROPERTY(config.displayOptions, size, DISPLAY_SIZE);
     INIT_UNSET_PROPERTY(config.displayOptions, flip, DISPLAY_FLIP);
@@ -459,7 +455,7 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.displayOptions, buttonLayoutOrientation, DISPLAY_LAYOUT_ORIENTATION);
 
     // peripheralOptions
-    PeripheralOptions& peripheralOptions = config.peripheralOptions;
+    PeripheralOptions &peripheralOptions = config.peripheralOptions;
     INIT_UNSET_PROPERTY(peripheralOptions.blockI2C0, enabled, (!!I2C0_ENABLED));
     INIT_UNSET_PROPERTY(peripheralOptions.blockI2C0, sda, (!!I2C0_ENABLED) ? I2C0_PIN_SDA : -1);
     INIT_UNSET_PROPERTY(peripheralOptions.blockI2C0, scl, (!!I2C0_ENABLED) ? I2C0_PIN_SCL : -1);
@@ -470,15 +466,15 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(peripheralOptions.blockI2C1, speed, I2C1_SPEED);
 
     INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, enabled, (!!SPI0_ENABLED));
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, rx, (!!SPI0_ENABLED) ?  SPI0_PIN_RX : -1);
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, cs, (!!SPI0_ENABLED) ?  SPI0_PIN_CS : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, rx, (!!SPI0_ENABLED) ? SPI0_PIN_RX : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, cs, (!!SPI0_ENABLED) ? SPI0_PIN_CS : -1);
     INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, sck, (!!SPI0_ENABLED) ? SPI0_PIN_SCK : -1);
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, tx, (!!SPI0_ENABLED) ?  SPI0_PIN_TX : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI0, tx, (!!SPI0_ENABLED) ? SPI0_PIN_TX : -1);
     INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, enabled, (!!SPI1_ENABLED));
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, rx, (!!SPI1_ENABLED) ?  SPI1_PIN_RX : -1);
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, cs, (!!SPI1_ENABLED) ?  SPI1_PIN_CS : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, rx, (!!SPI1_ENABLED) ? SPI1_PIN_RX : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, cs, (!!SPI1_ENABLED) ? SPI1_PIN_CS : -1);
     INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, sck, (!!SPI1_ENABLED) ? SPI1_PIN_SCK : -1);
-    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, tx, (!!SPI1_ENABLED) ?  SPI1_PIN_TX : -1);
+    INIT_UNSET_PROPERTY(peripheralOptions.blockSPI1, tx, (!!SPI1_ENABLED) ? SPI1_PIN_TX : -1);
 
     INIT_UNSET_PROPERTY(peripheralOptions.blockUSB0, enabled, USB_PERIPHERAL_ENABLED);
     INIT_UNSET_PROPERTY(peripheralOptions.blockUSB0, dp, USB_PERIPHERAL_PIN_DPLUS);
@@ -518,7 +514,9 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.ledOptions, pledPin2, PLED2_PIN);
     INIT_UNSET_PROPERTY(config.ledOptions, pledPin3, PLED3_PIN);
     INIT_UNSET_PROPERTY(config.ledOptions, pledPin4, PLED4_PIN);
-    INIT_UNSET_PROPERTY(config.ledOptions, pledColor, static_cast<uint32_t>(PLED_COLOR.r) << 16 | static_cast<uint32_t>(PLED_COLOR.g) << 8 | static_cast<uint32_t>(PLED_COLOR.b));
+    INIT_UNSET_PROPERTY(config.ledOptions, pledColor,
+                        static_cast<uint32_t>(PLED_COLOR.r) << 16 | static_cast<uint32_t>(PLED_COLOR.g) << 8 |
+                            static_cast<uint32_t>(PLED_COLOR.b));
     // hacky, but previous versions used PLED1_PIN for either PWM GPIO pins or RGB indexes
     // so we're just going to copy the defined values into both locations and have the migration
     // to pin mappings sort it out
@@ -643,7 +641,9 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.turboOptions, shmupMixMode, SHMUP_MIX_MODE);
     INIT_UNSET_PROPERTY(config.addonOptions.turboOptions, turboLedType, TURBO_LED_TYPE);
     INIT_UNSET_PROPERTY(config.addonOptions.turboOptions, turboLedIndex, TURBO_LED_INDEX);
-    INIT_UNSET_PROPERTY(config.addonOptions.turboOptions, turboLedColor, static_cast<uint32_t>(TURBO_LED_COLOR.r) << 16 | static_cast<uint32_t>(TURBO_LED_COLOR.g) << 8 | static_cast<uint32_t>(TURBO_LED_COLOR.b));
+    INIT_UNSET_PROPERTY(config.addonOptions.turboOptions, turboLedColor,
+                        static_cast<uint32_t>(TURBO_LED_COLOR.r) << 16 | static_cast<uint32_t>(TURBO_LED_COLOR.g) << 8 |
+                            static_cast<uint32_t>(TURBO_LED_COLOR.b));
 
     // addonOptions.reverseOptions
     INIT_UNSET_PROPERTY(config.addonOptions.reverseOptions, enabled, !!REVERSE_ENABLED);
@@ -664,7 +664,8 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
 
     // addonOptions.analogADS1219Options
     INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, enabled, !!I2C_ANALOG1219_ENABLED);
-    INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, deprecatedI2cBlock, (I2C_ANALOG1219_BLOCK == i2c0) ? 0 : 1)
+    INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, deprecatedI2cBlock,
+                        (I2C_ANALOG1219_BLOCK == i2c0) ? 0 : 1)
     INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, deprecatedI2cSDAPin, -1);
     INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, deprecatedI2cSCLPin, -1);
     INIT_UNSET_PROPERTY(config.addonOptions.analogADS1219Options, deprecatedI2cAddress, I2C_ANALOG1219_ADDRESS);
@@ -683,11 +684,13 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, deprecatedDownPin, (Pin_t)-1)
     INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, deprecatedLeftPin, (Pin_t)-1);
     INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, deprecatedRightPin, (Pin_t)-1);
-    INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, dpadMode, static_cast<DpadMode>(DUAL_DIRECTIONAL_STICK_MODE));
-    INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, combineMode, DualDirectionalCombinationMode::MIXED_MODE);
+    INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, dpadMode,
+                        static_cast<DpadMode>(DUAL_DIRECTIONAL_STICK_MODE));
+    INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, combineMode,
+                        DualDirectionalCombinationMode::MIXED_MODE);
     INIT_UNSET_PROPERTY(config.addonOptions.dualDirectionalOptions, fourWayMode, false);
 
-	// addonOptions.tiltOptions
+    // addonOptions.tiltOptions
     INIT_UNSET_PROPERTY(config.addonOptions.tiltOptions, enabled, !!TILT_ENABLED);
     INIT_UNSET_PROPERTY(config.addonOptions.tiltOptions, tilt1Pin, (Pin_t)-1);
     INIT_UNSET_PROPERTY(config.addonOptions.tiltOptions, factorTilt1LeftX, TILT1_FACTOR_LEFT_X);
@@ -745,18 +748,18 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.pcf8575Options, enabled, I2C_PCF8575_ENABLED);
     INIT_UNSET_PROPERTY(config.addonOptions.pcf8575Options, deprecatedI2cBlock, (I2C_PCF8575_BLOCK == i2c0) ? 0 : 1);
 
-    GpioAction pcf8575Actions[PCF8575_PIN_COUNT] = {
-        PCF8575_PIN00_ACTION,PCF8575_PIN01_ACTION,PCF8575_PIN02_ACTION,PCF8575_PIN03_ACTION,
-        PCF8575_PIN04_ACTION,PCF8575_PIN05_ACTION,PCF8575_PIN06_ACTION,PCF8575_PIN07_ACTION,
-        PCF8575_PIN08_ACTION,PCF8575_PIN09_ACTION,PCF8575_PIN10_ACTION,PCF8575_PIN11_ACTION,
-        PCF8575_PIN12_ACTION,PCF8575_PIN13_ACTION,PCF8575_PIN14_ACTION,PCF8575_PIN15_ACTION
-    };
+    GpioAction pcf8575Actions[PCF8575_PIN_COUNT] = {PCF8575_PIN00_ACTION, PCF8575_PIN01_ACTION, PCF8575_PIN02_ACTION,
+                                                    PCF8575_PIN03_ACTION, PCF8575_PIN04_ACTION, PCF8575_PIN05_ACTION,
+                                                    PCF8575_PIN06_ACTION, PCF8575_PIN07_ACTION, PCF8575_PIN08_ACTION,
+                                                    PCF8575_PIN09_ACTION, PCF8575_PIN10_ACTION, PCF8575_PIN11_ACTION,
+                                                    PCF8575_PIN12_ACTION, PCF8575_PIN13_ACTION, PCF8575_PIN14_ACTION,
+                                                    PCF8575_PIN15_ACTION};
 
     GpioDirection pcf8575Directions[PCF8575_PIN_COUNT] = {
-        PCF8575_PIN00_DIRECTION,PCF8575_PIN01_DIRECTION,PCF8575_PIN02_DIRECTION,PCF8575_PIN03_DIRECTION,
-        PCF8575_PIN04_DIRECTION,PCF8575_PIN05_DIRECTION,PCF8575_PIN06_DIRECTION,PCF8575_PIN07_DIRECTION,
-        PCF8575_PIN08_DIRECTION,PCF8575_PIN09_DIRECTION,PCF8575_PIN10_DIRECTION,PCF8575_PIN11_DIRECTION,
-        PCF8575_PIN12_DIRECTION,PCF8575_PIN13_DIRECTION,PCF8575_PIN14_DIRECTION,PCF8575_PIN15_DIRECTION
+        PCF8575_PIN00_DIRECTION, PCF8575_PIN01_DIRECTION, PCF8575_PIN02_DIRECTION, PCF8575_PIN03_DIRECTION,
+        PCF8575_PIN04_DIRECTION, PCF8575_PIN05_DIRECTION, PCF8575_PIN06_DIRECTION, PCF8575_PIN07_DIRECTION,
+        PCF8575_PIN08_DIRECTION, PCF8575_PIN09_DIRECTION, PCF8575_PIN10_DIRECTION, PCF8575_PIN11_DIRECTION,
+        PCF8575_PIN12_DIRECTION, PCF8575_PIN13_DIRECTION, PCF8575_PIN14_DIRECTION, PCF8575_PIN15_DIRECTION
     };
 
     for (uint16_t pin = 0; pin < PCF8575_PIN_COUNT; pin++) {
@@ -1016,7 +1019,6 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.focusModeOptions, buttonLockEnabled, !!FOCUS_MODE_BUTTON_LOCK_ENABLED);
     INIT_UNSET_PROPERTY(config.addonOptions.focusModeOptions, macroLockEnabled, !!FOCUS_MODE_MACRO_LOCK_ENABLED);
 
-
     // addonOptions.gamepadUSBHostOptions
     INIT_UNSET_PROPERTY(config.addonOptions.gamepadUSBHostOptions, enabled, GAMEPAD_USB_HOST_ENABLED)
 
@@ -1026,7 +1028,7 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.macroOptions, deprecatedPin, -1);
 
     // Set all macros
-    for(int i = 0; i < MAX_MACRO_LIMIT; i++) {
+    for (int i = 0; i < MAX_MACRO_LIMIT; i++) {
         INIT_UNSET_PROPERTY(config.addonOptions.macroOptions.macroList[i], enabled, 0);
         INIT_UNSET_PROPERTY(config.addonOptions.macroOptions.macroList[i], exclusive, 1);
         INIT_UNSET_PROPERTY(config.addonOptions.macroOptions.macroList[i], interruptible, 1);
@@ -1048,7 +1050,6 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.tg16Options, dataPin3, TG16_PAD_DATA_PIN3);
 }
 
-
 // -----------------------------------------------------
 // migrations
 // used for when we might need to populate configs with
@@ -1059,93 +1060,68 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
 // NOTE: this also handles initializations for a blank config! if/when the deprecated
 // pin mappings go away, the remainder of this code should go in there (there was no point
 // in duplicating it right now)
-void gpioMappingsMigrationCore(Config& config)
-{
-    PinMappings& deprecatedPinMappings = config.deprecatedPinMappings;
-    ExtraButtonOptions& extraButtonOptions = config.addonOptions.deprecatedExtraButtonOptions;
-    DualDirectionalOptions& ddiOptions = config.addonOptions.dualDirectionalOptions;
-    SliderOptions& jsSliderOptions = config.addonOptions.deprecatedSliderOptions;
-    SOCDSliderOptions& socdSliderOptions = config.addonOptions.socdSliderOptions;
-    PeripheralOptions& peripheralOptions = config.peripheralOptions;
-    KeyboardHostOptions& keyboardHostOptions = config.addonOptions.keyboardHostOptions;
-    PSPassthroughOptions& psPassthroughOptions = config.addonOptions.psPassthroughOptions;
-    TurboOptions& turboOptions = config.addonOptions.turboOptions;
-    TiltOptions& tiltOptions = config.addonOptions.tiltOptions;
-    FocusModeOptions& focusModeOptions = config.addonOptions.focusModeOptions;
-    ReverseOptions& reverseOptions = config.addonOptions.reverseOptions;
+void gpioMappingsMigrationCore(Config &config) {
+    PinMappings &deprecatedPinMappings         = config.deprecatedPinMappings;
+    ExtraButtonOptions &extraButtonOptions     = config.addonOptions.deprecatedExtraButtonOptions;
+    DualDirectionalOptions &ddiOptions         = config.addonOptions.dualDirectionalOptions;
+    SliderOptions &jsSliderOptions             = config.addonOptions.deprecatedSliderOptions;
+    SOCDSliderOptions &socdSliderOptions       = config.addonOptions.socdSliderOptions;
+    PeripheralOptions &peripheralOptions       = config.peripheralOptions;
+    KeyboardHostOptions &keyboardHostOptions   = config.addonOptions.keyboardHostOptions;
+    PSPassthroughOptions &psPassthroughOptions = config.addonOptions.psPassthroughOptions;
+    TurboOptions &turboOptions                 = config.addonOptions.turboOptions;
+    TiltOptions &tiltOptions                   = config.addonOptions.tiltOptions;
+    FocusModeOptions &focusModeOptions         = config.addonOptions.focusModeOptions;
+    ReverseOptions &reverseOptions             = config.addonOptions.reverseOptions;
 
-    const auto gamepadMaskToGpioAction = [&](Mask_t gpMask) -> GpioAction
-    {
-        switch (gpMask)
-        {
-            case GAMEPAD_MASK_DU:
-                return GpioAction::BUTTON_PRESS_UP;
-            case GAMEPAD_MASK_DD:
-                return GpioAction::BUTTON_PRESS_DOWN;
-            case GAMEPAD_MASK_DL:
-                return GpioAction::BUTTON_PRESS_LEFT;
-            case GAMEPAD_MASK_DR:
-                return GpioAction::BUTTON_PRESS_RIGHT;
-            case GAMEPAD_MASK_B1:
-                return GpioAction::BUTTON_PRESS_B1;
-            case GAMEPAD_MASK_B2:
-                return GpioAction::BUTTON_PRESS_B2;
-            case GAMEPAD_MASK_B3:
-                return GpioAction::BUTTON_PRESS_B3;
-            case GAMEPAD_MASK_B4:
-                return GpioAction::BUTTON_PRESS_B4;
-            case GAMEPAD_MASK_L1:
-                return GpioAction::BUTTON_PRESS_L1;
-            case GAMEPAD_MASK_R1:
-                return GpioAction::BUTTON_PRESS_R1;
-            case GAMEPAD_MASK_L2:
-                return GpioAction::BUTTON_PRESS_L2;
-            case GAMEPAD_MASK_R2:
-                return GpioAction::BUTTON_PRESS_R2;
-            case GAMEPAD_MASK_S1:
-                return GpioAction::BUTTON_PRESS_S1;
-            case GAMEPAD_MASK_S2:
-                return GpioAction::BUTTON_PRESS_S2;
-            case GAMEPAD_MASK_L3:
-                return GpioAction::BUTTON_PRESS_L3;
-            case GAMEPAD_MASK_R3:
-                return GpioAction::BUTTON_PRESS_R3;
-            case GAMEPAD_MASK_A1:
-                return GpioAction::BUTTON_PRESS_A1;
-            case GAMEPAD_MASK_A2:
-                return GpioAction::BUTTON_PRESS_A2;
-            case AUX_MASK_FUNCTION:
-                return GpioAction::BUTTON_PRESS_FN;
-            default:
-                return GpioAction::NONE;
+    const auto gamepadMaskToGpioAction = [&](Mask_t gpMask) -> GpioAction {
+        switch (gpMask) {
+            case GAMEPAD_MASK_DU  : return GpioAction::BUTTON_PRESS_UP;
+            case GAMEPAD_MASK_DD  : return GpioAction::BUTTON_PRESS_DOWN;
+            case GAMEPAD_MASK_DL  : return GpioAction::BUTTON_PRESS_LEFT;
+            case GAMEPAD_MASK_DR  : return GpioAction::BUTTON_PRESS_RIGHT;
+            case GAMEPAD_MASK_B1  : return GpioAction::BUTTON_PRESS_B1;
+            case GAMEPAD_MASK_B2  : return GpioAction::BUTTON_PRESS_B2;
+            case GAMEPAD_MASK_B3  : return GpioAction::BUTTON_PRESS_B3;
+            case GAMEPAD_MASK_B4  : return GpioAction::BUTTON_PRESS_B4;
+            case GAMEPAD_MASK_L1  : return GpioAction::BUTTON_PRESS_L1;
+            case GAMEPAD_MASK_R1  : return GpioAction::BUTTON_PRESS_R1;
+            case GAMEPAD_MASK_L2  : return GpioAction::BUTTON_PRESS_L2;
+            case GAMEPAD_MASK_R2  : return GpioAction::BUTTON_PRESS_R2;
+            case GAMEPAD_MASK_S1  : return GpioAction::BUTTON_PRESS_S1;
+            case GAMEPAD_MASK_S2  : return GpioAction::BUTTON_PRESS_S2;
+            case GAMEPAD_MASK_L3  : return GpioAction::BUTTON_PRESS_L3;
+            case GAMEPAD_MASK_R3  : return GpioAction::BUTTON_PRESS_R3;
+            case GAMEPAD_MASK_A1  : return GpioAction::BUTTON_PRESS_A1;
+            case GAMEPAD_MASK_A2  : return GpioAction::BUTTON_PRESS_A2;
+            case AUX_MASK_FUNCTION: return GpioAction::BUTTON_PRESS_FN;
+            default               : return GpioAction::NONE;
         }
     };
 
     // create an array of the old
-    GpioAction actions[NUM_BANK0_GPIOS] = {GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
-                                           GpioAction::NONE, GpioAction::NONE, GpioAction::NONE};
+    GpioAction actions[NUM_BANK0_GPIOS] = {
+        GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
+        GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
+        GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
+        GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE,
+        GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE, GpioAction::NONE
+    };
 
     // flag additional pins as being used by an addon not managed here
     const auto markAddonPinIfUsed = [&](Pin_t gpPin) -> void {
-        if (isValidPin(gpPin))
+        if (isValidPin(gpPin)) {
             actions[gpPin] = GpioAction::ASSIGNED_TO_ADDON;
+        }
     };
 
     // From Protobuf or Board Config
-    const auto fromProtoBuf = [&](bool isInProtobuf, Pin_t *protobufEntry, GpioAction action) -> void {
+    const auto fromProtoBuf = [&](bool isInProtobuf, Pin_t* protobufEntry, GpioAction action) -> void {
         // get the core config value for a pin either from protobuf or, failing that, BoardConfig.h
         if (isInProtobuf) {
             if (*protobufEntry >= 0 && *protobufEntry < 30) {
                 actions[*protobufEntry] = action;
-                *protobufEntry = -1;
+                *protobufEntry          = -1;
             }
         }
     };
@@ -1156,53 +1132,77 @@ void gpioMappingsMigrationCore(Config& config)
         }
     };
 
-    fromProtoBuf(deprecatedPinMappings.has_pinDpadUp,    &deprecatedPinMappings.pinDpadUp,    GpioAction::BUTTON_PRESS_UP);
-    fromProtoBuf(deprecatedPinMappings.has_pinDpadDown,  &deprecatedPinMappings.pinDpadDown,  GpioAction::BUTTON_PRESS_DOWN);
-    fromProtoBuf(deprecatedPinMappings.has_pinDpadLeft,  &deprecatedPinMappings.pinDpadLeft,  GpioAction::BUTTON_PRESS_LEFT);
-    fromProtoBuf(deprecatedPinMappings.has_pinDpadRight, &deprecatedPinMappings.pinDpadRight, GpioAction::BUTTON_PRESS_RIGHT);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonB1,  &deprecatedPinMappings.pinButtonB1,  GpioAction::BUTTON_PRESS_B1);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonB2,  &deprecatedPinMappings.pinButtonB2,  GpioAction::BUTTON_PRESS_B2);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonB3,  &deprecatedPinMappings.pinButtonB3,  GpioAction::BUTTON_PRESS_B3);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonB4,  &deprecatedPinMappings.pinButtonB4,  GpioAction::BUTTON_PRESS_B4);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonL1,  &deprecatedPinMappings.pinButtonL1,  GpioAction::BUTTON_PRESS_L1);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonR1,  &deprecatedPinMappings.pinButtonR1,  GpioAction::BUTTON_PRESS_R1);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonL2,  &deprecatedPinMappings.pinButtonL2,  GpioAction::BUTTON_PRESS_L2);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonR2,  &deprecatedPinMappings.pinButtonR2,  GpioAction::BUTTON_PRESS_R2);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonS1,  &deprecatedPinMappings.pinButtonS1,  GpioAction::BUTTON_PRESS_S1);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonS2,  &deprecatedPinMappings.pinButtonS2,  GpioAction::BUTTON_PRESS_S2);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonL3,  &deprecatedPinMappings.pinButtonL3,  GpioAction::BUTTON_PRESS_L3);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonR3,  &deprecatedPinMappings.pinButtonR3,  GpioAction::BUTTON_PRESS_R3);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonA1,  &deprecatedPinMappings.pinButtonA1,  GpioAction::BUTTON_PRESS_A1);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonA2,  &deprecatedPinMappings.pinButtonA2,  GpioAction::BUTTON_PRESS_A2);
-    fromProtoBuf(deprecatedPinMappings.has_pinButtonFn,  &deprecatedPinMappings.pinButtonFn,  GpioAction::BUTTON_PRESS_FN);
+    fromProtoBuf(deprecatedPinMappings.has_pinDpadUp, &deprecatedPinMappings.pinDpadUp, GpioAction::BUTTON_PRESS_UP);
+    fromProtoBuf(deprecatedPinMappings.has_pinDpadDown, &deprecatedPinMappings.pinDpadDown,
+                 GpioAction::BUTTON_PRESS_DOWN);
+    fromProtoBuf(deprecatedPinMappings.has_pinDpadLeft, &deprecatedPinMappings.pinDpadLeft,
+                 GpioAction::BUTTON_PRESS_LEFT);
+    fromProtoBuf(deprecatedPinMappings.has_pinDpadRight, &deprecatedPinMappings.pinDpadRight,
+                 GpioAction::BUTTON_PRESS_RIGHT);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonB1, &deprecatedPinMappings.pinButtonB1,
+                 GpioAction::BUTTON_PRESS_B1);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonB2, &deprecatedPinMappings.pinButtonB2,
+                 GpioAction::BUTTON_PRESS_B2);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonB3, &deprecatedPinMappings.pinButtonB3,
+                 GpioAction::BUTTON_PRESS_B3);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonB4, &deprecatedPinMappings.pinButtonB4,
+                 GpioAction::BUTTON_PRESS_B4);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonL1, &deprecatedPinMappings.pinButtonL1,
+                 GpioAction::BUTTON_PRESS_L1);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonR1, &deprecatedPinMappings.pinButtonR1,
+                 GpioAction::BUTTON_PRESS_R1);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonL2, &deprecatedPinMappings.pinButtonL2,
+                 GpioAction::BUTTON_PRESS_L2);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonR2, &deprecatedPinMappings.pinButtonR2,
+                 GpioAction::BUTTON_PRESS_R2);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonS1, &deprecatedPinMappings.pinButtonS1,
+                 GpioAction::BUTTON_PRESS_S1);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonS2, &deprecatedPinMappings.pinButtonS2,
+                 GpioAction::BUTTON_PRESS_S2);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonL3, &deprecatedPinMappings.pinButtonL3,
+                 GpioAction::BUTTON_PRESS_L3);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonR3, &deprecatedPinMappings.pinButtonR3,
+                 GpioAction::BUTTON_PRESS_R3);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonA1, &deprecatedPinMappings.pinButtonA1,
+                 GpioAction::BUTTON_PRESS_A1);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonA2, &deprecatedPinMappings.pinButtonA2,
+                 GpioAction::BUTTON_PRESS_A2);
+    fromProtoBuf(deprecatedPinMappings.has_pinButtonFn, &deprecatedPinMappings.pinButtonFn,
+                 GpioAction::BUTTON_PRESS_FN);
 
     // convert extra pin mapping to GPIO mapping config
     if (extraButtonOptions.enabled && isValidPin(extraButtonOptions.pin)) {
         // previous config had a value we haven't migrated yet, it can/should apply in the new config
         actions[extraButtonOptions.pin] = gamepadMaskToGpioAction(extraButtonOptions.buttonMap);
-        extraButtonOptions.pin = -1;
-        extraButtonOptions.enabled = false;
+        extraButtonOptions.pin          = -1;
+        extraButtonOptions.enabled      = false;
     }
 
     // convert DDI direction pin mapping to GPIO mapping config
     if (ddiOptions.enabled) {
-        fromProtoBuf(ddiOptions.has_deprecatedUpPin,    &ddiOptions.deprecatedUpPin, GpioAction::BUTTON_PRESS_DDI_UP);
-        fromProtoBuf(ddiOptions.has_deprecatedDownPin,  &ddiOptions.deprecatedDownPin, GpioAction::BUTTON_PRESS_DDI_DOWN);
-        fromProtoBuf(ddiOptions.has_deprecatedLeftPin,  &ddiOptions.deprecatedLeftPin, GpioAction::BUTTON_PRESS_DDI_LEFT);
-        fromProtoBuf(ddiOptions.has_deprecatedRightPin, &ddiOptions.deprecatedRightPin, GpioAction::BUTTON_PRESS_DDI_RIGHT);
+        fromProtoBuf(ddiOptions.has_deprecatedUpPin, &ddiOptions.deprecatedUpPin, GpioAction::BUTTON_PRESS_DDI_UP);
+        fromProtoBuf(ddiOptions.has_deprecatedDownPin, &ddiOptions.deprecatedDownPin,
+                     GpioAction::BUTTON_PRESS_DDI_DOWN);
+        fromProtoBuf(ddiOptions.has_deprecatedLeftPin, &ddiOptions.deprecatedLeftPin,
+                     GpioAction::BUTTON_PRESS_DDI_LEFT);
+        fromProtoBuf(ddiOptions.has_deprecatedRightPin, &ddiOptions.deprecatedRightPin,
+                     GpioAction::BUTTON_PRESS_DDI_RIGHT);
     }
 
     // convert JS slider pin mappings to GPIO mapping config
     if (jsSliderOptions.enabled && isValidPin(jsSliderOptions.deprecatedPinSliderOne)) {
         switch (jsSliderOptions.deprecatedModeOne) {
             case DpadMode::DPAD_MODE_DIGITAL: {
-                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_DP; break;
+                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_DP;
+                break;
             }
             case DpadMode::DPAD_MODE_LEFT_ANALOG: {
-                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_LS; break;
+                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_LS;
+                break;
             }
             case DpadMode::DPAD_MODE_RIGHT_ANALOG: {
-                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_RS; break;
+                actions[jsSliderOptions.deprecatedPinSliderOne] = GpioAction::SUSTAIN_DP_MODE_RS;
+                break;
             }
             default: break;
         }
@@ -1211,13 +1211,16 @@ void gpioMappingsMigrationCore(Config& config)
     if (jsSliderOptions.enabled && isValidPin(jsSliderOptions.deprecatedPinSliderTwo)) {
         switch (jsSliderOptions.deprecatedModeTwo) {
             case DpadMode::DPAD_MODE_DIGITAL: {
-                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_DP; break;
+                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_DP;
+                break;
             }
             case DpadMode::DPAD_MODE_LEFT_ANALOG: {
-                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_LS; break;
+                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_LS;
+                break;
             }
             case DpadMode::DPAD_MODE_RIGHT_ANALOG: {
-                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_RS; break;
+                actions[jsSliderOptions.deprecatedPinSliderTwo] = GpioAction::SUSTAIN_DP_MODE_RS;
+                break;
             }
             default: break;
         }
@@ -1227,19 +1230,24 @@ void gpioMappingsMigrationCore(Config& config)
     if (socdSliderOptions.enabled && isValidPin(socdSliderOptions.deprecatedPinOne)) {
         switch (socdSliderOptions.deprecatedModeOne) {
             case SOCDMode::SOCD_MODE_UP_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_UP_PRIO; break;
+                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_UP_PRIO;
+                break;
             }
             case SOCDMode::SOCD_MODE_NEUTRAL: {
-                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_NEUTRAL; break;
+                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_NEUTRAL;
+                break;
             }
             case SOCDMode::SOCD_MODE_SECOND_INPUT_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_SECOND_WIN; break;
+                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_SECOND_WIN;
+                break;
             }
             case SOCDMode::SOCD_MODE_FIRST_INPUT_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_FIRST_WIN; break;
+                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_FIRST_WIN;
+                break;
             }
             case SOCDMode::SOCD_MODE_BYPASS: {
-                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_BYPASS; break;
+                actions[socdSliderOptions.deprecatedPinOne] = GpioAction::SUSTAIN_SOCD_MODE_BYPASS;
+                break;
             }
             default: break;
         }
@@ -1249,19 +1257,24 @@ void gpioMappingsMigrationCore(Config& config)
     if (socdSliderOptions.enabled && isValidPin(socdSliderOptions.deprecatedPinTwo)) {
         switch (socdSliderOptions.deprecatedModeTwo) {
             case SOCDMode::SOCD_MODE_UP_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_UP_PRIO; break;
+                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_UP_PRIO;
+                break;
             }
             case SOCDMode::SOCD_MODE_NEUTRAL: {
-                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_NEUTRAL; break;
+                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_NEUTRAL;
+                break;
             }
             case SOCDMode::SOCD_MODE_SECOND_INPUT_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_SECOND_WIN; break;
+                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_SECOND_WIN;
+                break;
             }
             case SOCDMode::SOCD_MODE_FIRST_INPUT_PRIORITY: {
-                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_FIRST_WIN; break;
+                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_FIRST_WIN;
+                break;
             }
             case SOCDMode::SOCD_MODE_BYPASS: {
-                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_BYPASS; break;
+                actions[socdSliderOptions.deprecatedPinTwo] = GpioAction::SUSTAIN_SOCD_MODE_BYPASS;
+                break;
             }
             default: break;
         }
@@ -1278,163 +1291,163 @@ void gpioMappingsMigrationCore(Config& config)
 
     // verify that tilt factors are not set to -1
     if (tiltOptions.enabled) {
-        if (tiltOptions.factorTilt1LeftX == -1) tiltOptions.factorTilt1LeftX = TILT1_FACTOR_LEFT_X;
-        if (tiltOptions.factorTilt1LeftY == -1) tiltOptions.factorTilt1LeftY = TILT1_FACTOR_LEFT_Y;
-        if (tiltOptions.factorTilt1RightX == -1) tiltOptions.factorTilt1RightX = TILT1_FACTOR_RIGHT_X;
-        if (tiltOptions.factorTilt1RightY == -1) tiltOptions.factorTilt1RightY = TILT1_FACTOR_RIGHT_Y;
-        if (tiltOptions.factorTilt2LeftX == -1) tiltOptions.factorTilt2LeftX = TILT2_FACTOR_LEFT_X;
-        if (tiltOptions.factorTilt2LeftY == -1) tiltOptions.factorTilt2LeftY = TILT2_FACTOR_LEFT_Y;
-        if (tiltOptions.factorTilt2RightX == -1) tiltOptions.factorTilt2RightX = TILT2_FACTOR_RIGHT_X;
-        if (tiltOptions.factorTilt2RightY == -1) tiltOptions.factorTilt2RightY = TILT2_FACTOR_RIGHT_Y;
+        if (tiltOptions.factorTilt1LeftX == -1) {
+            tiltOptions.factorTilt1LeftX = TILT1_FACTOR_LEFT_X;
+        }
+        if (tiltOptions.factorTilt1LeftY == -1) {
+            tiltOptions.factorTilt1LeftY = TILT1_FACTOR_LEFT_Y;
+        }
+        if (tiltOptions.factorTilt1RightX == -1) {
+            tiltOptions.factorTilt1RightX = TILT1_FACTOR_RIGHT_X;
+        }
+        if (tiltOptions.factorTilt1RightY == -1) {
+            tiltOptions.factorTilt1RightY = TILT1_FACTOR_RIGHT_Y;
+        }
+        if (tiltOptions.factorTilt2LeftX == -1) {
+            tiltOptions.factorTilt2LeftX = TILT2_FACTOR_LEFT_X;
+        }
+        if (tiltOptions.factorTilt2LeftY == -1) {
+            tiltOptions.factorTilt2LeftY = TILT2_FACTOR_LEFT_Y;
+        }
+        if (tiltOptions.factorTilt2RightX == -1) {
+            tiltOptions.factorTilt2RightX = TILT2_FACTOR_RIGHT_X;
+        }
+        if (tiltOptions.factorTilt2RightY == -1) {
+            tiltOptions.factorTilt2RightY = TILT2_FACTOR_RIGHT_Y;
+        }
 
         fromProtoBuf(tiltOptions.has_tilt1Pin, &tiltOptions.tilt1Pin, GpioAction::ANALOG_DIRECTION_MOD_LOW);
         fromProtoBuf(tiltOptions.has_tilt2Pin, &tiltOptions.tilt2Pin, GpioAction::ANALOG_DIRECTION_MOD_HIGH);
-        fromProtoBuf(tiltOptions.has_tiltLeftAnalogUpPin, &tiltOptions.tiltLeftAnalogUpPin, GpioAction::ANALOG_DIRECTION_LS_Y_NEG);
-        fromProtoBuf(tiltOptions.has_tiltLeftAnalogDownPin, &tiltOptions.tiltLeftAnalogDownPin, GpioAction::ANALOG_DIRECTION_LS_Y_POS);
-        fromProtoBuf(tiltOptions.has_tiltLeftAnalogLeftPin, &tiltOptions.tiltLeftAnalogLeftPin, GpioAction::ANALOG_DIRECTION_LS_X_NEG);
-        fromProtoBuf(tiltOptions.has_tiltLeftAnalogRightPin, &tiltOptions.tiltLeftAnalogRightPin, GpioAction::ANALOG_DIRECTION_LS_X_POS);
-        fromProtoBuf(tiltOptions.has_tiltRightAnalogUpPin, &tiltOptions.tiltRightAnalogUpPin, GpioAction::ANALOG_DIRECTION_RS_Y_NEG);
-        fromProtoBuf(tiltOptions.has_tiltRightAnalogDownPin, &tiltOptions.tiltRightAnalogDownPin, GpioAction::ANALOG_DIRECTION_RS_Y_POS);
-        fromProtoBuf(tiltOptions.has_tiltRightAnalogLeftPin, &tiltOptions.tiltRightAnalogLeftPin, GpioAction::ANALOG_DIRECTION_RS_X_NEG);
-        fromProtoBuf(tiltOptions.has_tiltRightAnalogRightPin, &tiltOptions.tiltRightAnalogRightPin, GpioAction::ANALOG_DIRECTION_RS_X_POS);
+        fromProtoBuf(tiltOptions.has_tiltLeftAnalogUpPin, &tiltOptions.tiltLeftAnalogUpPin,
+                     GpioAction::ANALOG_DIRECTION_LS_Y_NEG);
+        fromProtoBuf(tiltOptions.has_tiltLeftAnalogDownPin, &tiltOptions.tiltLeftAnalogDownPin,
+                     GpioAction::ANALOG_DIRECTION_LS_Y_POS);
+        fromProtoBuf(tiltOptions.has_tiltLeftAnalogLeftPin, &tiltOptions.tiltLeftAnalogLeftPin,
+                     GpioAction::ANALOG_DIRECTION_LS_X_NEG);
+        fromProtoBuf(tiltOptions.has_tiltLeftAnalogRightPin, &tiltOptions.tiltLeftAnalogRightPin,
+                     GpioAction::ANALOG_DIRECTION_LS_X_POS);
+        fromProtoBuf(tiltOptions.has_tiltRightAnalogUpPin, &tiltOptions.tiltRightAnalogUpPin,
+                     GpioAction::ANALOG_DIRECTION_RS_Y_NEG);
+        fromProtoBuf(tiltOptions.has_tiltRightAnalogDownPin, &tiltOptions.tiltRightAnalogDownPin,
+                     GpioAction::ANALOG_DIRECTION_RS_Y_POS);
+        fromProtoBuf(tiltOptions.has_tiltRightAnalogLeftPin, &tiltOptions.tiltRightAnalogLeftPin,
+                     GpioAction::ANALOG_DIRECTION_RS_X_NEG);
+        fromProtoBuf(tiltOptions.has_tiltRightAnalogRightPin, &tiltOptions.tiltRightAnalogRightPin,
+                     GpioAction::ANALOG_DIRECTION_RS_X_POS);
     }
 
     // Assign all potential board config pins
-    GpioAction boardConfig[NUM_BANK0_GPIOS] = {GPIO_PIN_00, GPIO_PIN_01, GPIO_PIN_02,
-											   GPIO_PIN_03, GPIO_PIN_04, GPIO_PIN_05,
-                                               GPIO_PIN_06, GPIO_PIN_07, GPIO_PIN_08,
-                                               GPIO_PIN_09, GPIO_PIN_10, GPIO_PIN_11,
-                                               GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14,
-                                               GPIO_PIN_15, GPIO_PIN_16, GPIO_PIN_17,
-                                               GPIO_PIN_18, GPIO_PIN_19, GPIO_PIN_20,
-                                               GPIO_PIN_21, GPIO_PIN_22, GPIO_PIN_23,
-                                               GPIO_PIN_24, GPIO_PIN_25, GPIO_PIN_26,
-                                               GPIO_PIN_27, GPIO_PIN_28, GPIO_PIN_29};
+    GpioAction boardConfig[NUM_BANK0_GPIOS] = {GPIO_PIN_00, GPIO_PIN_01, GPIO_PIN_02, GPIO_PIN_03, GPIO_PIN_04,
+                                               GPIO_PIN_05, GPIO_PIN_06, GPIO_PIN_07, GPIO_PIN_08, GPIO_PIN_09,
+                                               GPIO_PIN_10, GPIO_PIN_11, GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14,
+                                               GPIO_PIN_15, GPIO_PIN_16, GPIO_PIN_17, GPIO_PIN_18, GPIO_PIN_19,
+                                               GPIO_PIN_20, GPIO_PIN_21, GPIO_PIN_22, GPIO_PIN_23, GPIO_PIN_24,
+                                               GPIO_PIN_25, GPIO_PIN_26, GPIO_PIN_27, GPIO_PIN_28, GPIO_PIN_29};
 
     // If we didn't import from protobuf, import from boardconfig
-    for(unsigned int i = 0; i < NUM_BANK0_GPIOS; i++) {
+    for (unsigned int i = 0; i < NUM_BANK0_GPIOS; i++) {
         fromBoardConfig(i, boardConfig[i]);
     }
 
     // migrate I2C addons to use peripheral manager
-    if (!peripheralOptions.blockI2C0.enabled && (
-            (config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 0)) || 
-            (config.addonOptions.analogADS1219Options.enabled && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)) || 
-            (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0))
-        )
-    ) {
-        peripheralOptions.blockI2C0.enabled = (
-            (config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 0)) | 
-            (config.addonOptions.analogADS1219Options.enabled && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)) | 
-            (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)) | 
-            (!!I2C0_ENABLED)
-        );
+    if (!peripheralOptions.blockI2C0.enabled &&
+        ((config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 0)) ||
+         (config.addonOptions.analogADS1219Options.enabled &&
+          (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)) ||
+         (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)))) {
+        peripheralOptions.blockI2C0.enabled =
+            ((config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 0)) |
+             (config.addonOptions.analogADS1219Options.enabled &&
+              (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)) |
+             (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)) |
+             (!!I2C0_ENABLED));
 
         // pin configuration
-        peripheralOptions.blockI2C0.sda = (
-            isValidPin(config.displayOptions.deprecatedI2cSDAPin) && (config.displayOptions.deprecatedI2cBlock == 0) ? 
-            config.displayOptions.deprecatedI2cSDAPin : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSDAPin) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSDAPin : 
-                    I2C0_PIN_SDA
-                )
-            )
-        );
+        peripheralOptions.blockI2C0.sda =
+            (isValidPin(config.displayOptions.deprecatedI2cSDAPin) && (config.displayOptions.deprecatedI2cBlock == 0)
+                 ? config.displayOptions.deprecatedI2cSDAPin
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSDAPin) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSDAPin
+                               : I2C0_PIN_SDA)));
         markAddonPinIfUsed(peripheralOptions.blockI2C0.sda);
 
-        peripheralOptions.blockI2C0.scl = (
-            isValidPin(config.displayOptions.deprecatedI2cSCLPin) && (config.displayOptions.deprecatedI2cBlock == 0) ? 
-            config.displayOptions.deprecatedI2cSCLPin : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSCLPin) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSCLPin : 
-                    I2C0_PIN_SCL
-                )
-            )
-        );
+        peripheralOptions.blockI2C0.scl =
+            (isValidPin(config.displayOptions.deprecatedI2cSCLPin) && (config.displayOptions.deprecatedI2cBlock == 0)
+                 ? config.displayOptions.deprecatedI2cSCLPin
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSCLPin) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSCLPin
+                               : I2C0_PIN_SCL)));
         markAddonPinIfUsed(peripheralOptions.blockI2C0.scl);
 
         // option configuration
-        peripheralOptions.blockI2C0.speed = (
-            isValidPin(config.displayOptions.deprecatedI2cSpeed) && (config.displayOptions.deprecatedI2cBlock == 0) ? 
-            config.displayOptions.deprecatedI2cSpeed : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSpeed) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSpeed : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSpeed) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSpeed : 
-                    I2C0_SPEED
-                )
-            )
-        );
+        peripheralOptions.blockI2C0.speed =
+            (isValidPin(config.displayOptions.deprecatedI2cSpeed) && (config.displayOptions.deprecatedI2cBlock == 0)
+                 ? config.displayOptions.deprecatedI2cSpeed
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSpeed) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 0)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSpeed
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSpeed) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 0)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSpeed
+                               : I2C0_SPEED)));
     }
 
-    if (!peripheralOptions.blockI2C1.enabled && (
-            (config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 1)) || 
-            (config.addonOptions.analogADS1219Options.enabled && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)) || 
-            (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1))
-        )
-    ) {
-        peripheralOptions.blockI2C1.enabled = (
-            (config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 1)) | 
-            (config.addonOptions.analogADS1219Options.enabled && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)) | 
-            (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)) | 
-            (!!I2C1_ENABLED)
-        );
+    if (!peripheralOptions.blockI2C1.enabled &&
+        ((config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 1)) ||
+         (config.addonOptions.analogADS1219Options.enabled &&
+          (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)) ||
+         (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)))) {
+        peripheralOptions.blockI2C1.enabled =
+            ((config.displayOptions.enabled && (config.displayOptions.deprecatedI2cBlock == 1)) |
+             (config.addonOptions.analogADS1219Options.enabled &&
+              (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)) |
+             (config.addonOptions.wiiOptions.enabled && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)) |
+             (!!I2C1_ENABLED));
 
         // pin configuration
-        peripheralOptions.blockI2C1.sda = (
-            isValidPin(config.displayOptions.deprecatedI2cSDAPin) && (config.displayOptions.deprecatedI2cBlock == 1) ? 
-            config.displayOptions.deprecatedI2cSDAPin : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSDAPin) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSDAPin : 
-                    I2C1_PIN_SDA
-                )
-            )
-        );
+        peripheralOptions.blockI2C1.sda =
+            (isValidPin(config.displayOptions.deprecatedI2cSDAPin) && (config.displayOptions.deprecatedI2cBlock == 1)
+                 ? config.displayOptions.deprecatedI2cSDAPin
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSDAPin
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSDAPin) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSDAPin
+                               : I2C1_PIN_SDA)));
         markAddonPinIfUsed(peripheralOptions.blockI2C1.sda);
 
-        peripheralOptions.blockI2C1.scl = (
-            isValidPin(config.displayOptions.deprecatedI2cSCLPin) && (config.displayOptions.deprecatedI2cBlock == 1) ? 
-            config.displayOptions.deprecatedI2cSCLPin : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSCLPin) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSCLPin : 
-                    I2C1_PIN_SCL
-                )
-            )
-        );
+        peripheralOptions.blockI2C1.scl =
+            (isValidPin(config.displayOptions.deprecatedI2cSCLPin) && (config.displayOptions.deprecatedI2cBlock == 1)
+                 ? config.displayOptions.deprecatedI2cSCLPin
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSCLPin
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSCLPin) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSCLPin
+                               : I2C1_PIN_SCL)));
         markAddonPinIfUsed(peripheralOptions.blockI2C1.scl);
 
         // option configuration
-        peripheralOptions.blockI2C1.speed = (
-            isValidPin(config.displayOptions.deprecatedI2cSpeed) && (config.displayOptions.deprecatedI2cBlock == 1) ? 
-            config.displayOptions.deprecatedI2cSpeed : 
-            (
-                isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSpeed) && (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1) ? 
-                config.addonOptions.analogADS1219Options.deprecatedI2cSpeed : 
-                (
-                    isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSpeed) && (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1) ? 
-                    config.addonOptions.wiiOptions.deprecatedI2cSpeed : 
-                    I2C1_SPEED
-                )
-            )
-        );
+        peripheralOptions.blockI2C1.speed =
+            (isValidPin(config.displayOptions.deprecatedI2cSpeed) && (config.displayOptions.deprecatedI2cBlock == 1)
+                 ? config.displayOptions.deprecatedI2cSpeed
+                 : (isValidPin(config.addonOptions.analogADS1219Options.deprecatedI2cSpeed) &&
+                            (config.addonOptions.analogADS1219Options.deprecatedI2cBlock == 1)
+                        ? config.addonOptions.analogADS1219Options.deprecatedI2cSpeed
+                        : (isValidPin(config.addonOptions.wiiOptions.deprecatedI2cSpeed) &&
+                                   (config.addonOptions.wiiOptions.deprecatedI2cBlock == 1)
+                               ? config.addonOptions.wiiOptions.deprecatedI2cSpeed
+                               : I2C1_SPEED)));
     }
 
     // migrate USB addons to use peripheral manager
@@ -1442,29 +1455,21 @@ void gpioMappingsMigrationCore(Config& config)
         peripheralOptions.blockUSB0.enabled = keyboardHostOptions.enabled | psPassthroughOptions.enabled | false;
 
         if (peripheralOptions.blockUSB0.enabled) {
-            peripheralOptions.blockUSB0.enable5v = (
-                isValidPin(keyboardHostOptions.deprecatedPin5V) ?
-                keyboardHostOptions.deprecatedPin5V :
-                (
-                    isValidPin(psPassthroughOptions.deprecatedPin5V) ?
-                    psPassthroughOptions.deprecatedPin5V :
-                    -1
-                )
-            );
+            peripheralOptions.blockUSB0.enable5v =
+                (isValidPin(keyboardHostOptions.deprecatedPin5V)
+                     ? keyboardHostOptions.deprecatedPin5V
+                     : (isValidPin(psPassthroughOptions.deprecatedPin5V) ? psPassthroughOptions.deprecatedPin5V : -1));
             markAddonPinIfUsed(peripheralOptions.blockUSB0.enable5v);
 
-            peripheralOptions.blockUSB0.dp = (
-                isValidPin(keyboardHostOptions.deprecatedPinDplus) ?
-                keyboardHostOptions.deprecatedPinDplus :
-                (
-                    isValidPin(psPassthroughOptions.deprecatedPinDplus) ?
-                    psPassthroughOptions.deprecatedPinDplus :
-                    -1
-                )
-            );
+            peripheralOptions.blockUSB0.dp =
+                (isValidPin(keyboardHostOptions.deprecatedPinDplus)
+                     ? keyboardHostOptions.deprecatedPinDplus
+                     : (isValidPin(psPassthroughOptions.deprecatedPinDplus) ? psPassthroughOptions.deprecatedPinDplus
+                                                                            : -1));
             markAddonPinIfUsed(peripheralOptions.blockUSB0.dp);
-            if (isValidPin(peripheralOptions.blockUSB0.dp))
-                actions[peripheralOptions.blockUSB0.dp+1] = GpioAction::ASSIGNED_TO_ADDON;
+            if (isValidPin(peripheralOptions.blockUSB0.dp)) {
+                actions[peripheralOptions.blockUSB0.dp + 1] = GpioAction::ASSIGNED_TO_ADDON;
+            }
         }
     }
 
@@ -1520,7 +1525,6 @@ void gpioMappingsMigrationCore(Config& config)
         markAddonPinIfUsed(config.addonOptions.heTriggerOptions.selectPin3);
     }
 
-
     for (Pin_t pin = 0; pin < (Pin_t)NUM_BANK0_GPIOS; pin++) {
         config.gpioMappings.pins[pin].action = actions[pin];
     }
@@ -1532,8 +1536,7 @@ void gpioMappingsMigrationCore(Config& config)
 
 // if the user previously had the JS slider addon enabled, copy its default to the
 // core gamepad setting, since the functionality is within the core now
-void migrateJSliderToCore(Config& config)
-{
+void migrateJSliderToCore(Config &config) {
     if (config.addonOptions.deprecatedSliderOptions.enabled) {
         config.gamepadOptions.dpadMode = config.addonOptions.deprecatedSliderOptions.deprecatedModeDefault;
         config.addonOptions.deprecatedSliderOptions.enabled = false;
@@ -1545,8 +1548,7 @@ void migrateJSliderToCore(Config& config)
 // NOTE: this also handles initializations for a blank config! if/when the deprecated
 // pin mappings go away, the remainder of this code should go in there (there was no point
 // in duplicating it right now)
-void gpioMappingsMigrationProfiles(Config& config)
-{
+void gpioMappingsMigrationProfiles(Config &config) {
     AlternativePinMappings* deprecatedAlts = config.profileOptions.deprecatedAlternativePinMappings;
 
     const auto assignProfilePinIfUsed = [&](uint8_t profileNum, Pin_t profilePin, GpioAction action) -> void {
@@ -1555,23 +1557,23 @@ void gpioMappingsMigrationProfiles(Config& config)
         }
     };
 
-    for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES-2; profileNum++) {
+    for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES - 2; profileNum++) {
         for (Pin_t pin = 0; pin < (Pin_t)NUM_BANK0_GPIOS; pin++) {
             config.profileOptions.gpioMappingsSets[profileNum].pins[pin].action = config.gpioMappings.pins[pin].action;
         }
         // only check protobuf if profiles are defined
         if (profileNum < config.profileOptions.deprecatedAlternativePinMappings_count) {
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB1,  GpioAction::BUTTON_PRESS_B1);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB2,  GpioAction::BUTTON_PRESS_B2);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB3,  GpioAction::BUTTON_PRESS_B3);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB4,  GpioAction::BUTTON_PRESS_B4);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonL1,  GpioAction::BUTTON_PRESS_L1);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonR1,  GpioAction::BUTTON_PRESS_R1);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonL2,  GpioAction::BUTTON_PRESS_L2);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonR2,  GpioAction::BUTTON_PRESS_R2);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadUp,    GpioAction::BUTTON_PRESS_UP);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadDown,  GpioAction::BUTTON_PRESS_DOWN);
-            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadLeft,  GpioAction::BUTTON_PRESS_LEFT);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB1, GpioAction::BUTTON_PRESS_B1);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB2, GpioAction::BUTTON_PRESS_B2);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB3, GpioAction::BUTTON_PRESS_B3);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonB4, GpioAction::BUTTON_PRESS_B4);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonL1, GpioAction::BUTTON_PRESS_L1);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonR1, GpioAction::BUTTON_PRESS_R1);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonL2, GpioAction::BUTTON_PRESS_L2);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinButtonR2, GpioAction::BUTTON_PRESS_R2);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadUp, GpioAction::BUTTON_PRESS_UP);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadDown, GpioAction::BUTTON_PRESS_DOWN);
+            assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadLeft, GpioAction::BUTTON_PRESS_LEFT);
             assignProfilePinIfUsed(profileNum, deprecatedAlts[profileNum].pinDpadRight, GpioAction::BUTTON_PRESS_RIGHT);
         }
 
@@ -1584,67 +1586,67 @@ void gpioMappingsMigrationProfiles(Config& config)
     config.migrations.buttonProfilesMigrated = true;
 }
 
-void migrateTurboPinToGpio(Config& config) {
+void migrateTurboPinToGpio(Config &config) {
     // Features converted here must set their previous deprecated pin/set value as well (pin = -1)
-    TurboOptions & turboOptions = config.addonOptions.turboOptions;
+    TurboOptions &turboOptions = config.addonOptions.turboOptions;
 
     // Convert turbo pin mapping to GPIO mapping config
     if (turboOptions.enabled && isValidPin(turboOptions.deprecatedButtonPin)) {
         Pin_t pin = turboOptions.deprecatedButtonPin;
         // previous config had a value we haven't migrated yet, it can/should apply in the new config
         config.gpioMappings.pins[pin].action = GpioAction::BUTTON_PRESS_TURBO;
-        for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES-2; profileNum++) {
+        for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES - 2; profileNum++) {
             config.profileOptions.gpioMappingsSets[profileNum].pins[pin].action = GpioAction::BUTTON_PRESS_TURBO;
         }
         turboOptions.deprecatedButtonPin = -1; // set our turbo options to -1 for subsequent calls
     }
 
     // Make sure we set PWM mode if we are using led pin
-    if ( turboOptions.turboLedType == PLED_TYPE_NONE && isValidPin(turboOptions.ledPin) ) {
+    if (turboOptions.turboLedType == PLED_TYPE_NONE && isValidPin(turboOptions.ledPin)) {
         turboOptions.turboLedType = PLED_TYPE_PWM;
     }
 }
 
-void migrateAuthenticationMethods(Config& config) {
+void migrateAuthenticationMethods(Config &config) {
     // Auth migrations
-    GamepadOptions & gamepadOptions = config.gamepadOptions;
-    PS4Options & ps4Options = config.addonOptions.ps4Options;
-    PSPassthroughOptions & psPassthroughOptions = config.addonOptions.psPassthroughOptions;
-    XBOnePassthroughOptions & xbonePassthroughOptions = config.addonOptions.xbonePassthroughOptions;
+    GamepadOptions &gamepadOptions                   = config.gamepadOptions;
+    PS4Options &ps4Options                           = config.addonOptions.ps4Options;
+    PSPassthroughOptions &psPassthroughOptions       = config.addonOptions.psPassthroughOptions;
+    XBOnePassthroughOptions &xbonePassthroughOptions = config.addonOptions.xbonePassthroughOptions;
 
-    if ( ps4Options.enabled == true ) { // PS4-Mode "on", assume keys are loaded, do not change modes
+    if (ps4Options.enabled == true) { // PS4-Mode "on", assume keys are loaded, do not change modes
         gamepadOptions.ps4AuthType = InputModeAuthType::INPUT_MODE_AUTH_TYPE_KEYS;
-        ps4Options.enabled = false; // disable PS4-Mode add-on permanently
+        ps4Options.enabled         = false; // disable PS4-Mode add-on permanently
     }
 
-    if ( psPassthroughOptions.enabled == true ) { // PS5 add-on "on", USB pass through, update ps4->ps5 boot
+    if (psPassthroughOptions.enabled == true) { // PS5 add-on "on", USB pass through, update ps4->ps5 boot
         gamepadOptions.ps5AuthType = InputModeAuthType::INPUT_MODE_AUTH_TYPE_USB;
         // If current mode is PS4, update to PS5
-        if ( gamepadOptions.inputMode == INPUT_MODE_PS4 ) {
+        if (gamepadOptions.inputMode == INPUT_MODE_PS4) {
             gamepadOptions.inputMode = INPUT_MODE_PS5;
         }
         // Also update our boot mode from PS4 to PS5 if set
-        int32_t * bootModes[8] = { &config.gamepadOptions.inputModeB1, &config.gamepadOptions.inputModeB2,
-            &config.gamepadOptions.inputModeB3, &config.gamepadOptions.inputModeB4,
-            &config.gamepadOptions.inputModeL1, &config.gamepadOptions.inputModeL2,
-            &config.gamepadOptions.inputModeR1, &config.gamepadOptions.inputModeR2};
-        for(int32_t i = 0; i < 8; i++ ) {
-            if ( *bootModes[i] == INPUT_MODE_PS4 ) {
+        int32_t* bootModes[8] = {&config.gamepadOptions.inputModeB1, &config.gamepadOptions.inputModeB2,
+                                 &config.gamepadOptions.inputModeB3, &config.gamepadOptions.inputModeB4,
+                                 &config.gamepadOptions.inputModeL1, &config.gamepadOptions.inputModeL2,
+                                 &config.gamepadOptions.inputModeR1, &config.gamepadOptions.inputModeR2};
+        for (int32_t i = 0; i < 8; i++) {
+            if (*bootModes[i] == INPUT_MODE_PS4) {
                 *bootModes[i] = INPUT_MODE_PS5; // modify ps4 -> ps5
             }
         }
         psPassthroughOptions.enabled = false; // disable PS-Passthrough add-on permanently
     }
 
-    if ( xbonePassthroughOptions.enabled == true ) { // Xbox One add-on "on", USB pass through is assumed
-        xbonePassthroughOptions.enabled = false; // disable and go on our way
+    if (xbonePassthroughOptions.enabled == true) { // Xbox One add-on "on", USB pass through is assumed
+        xbonePassthroughOptions.enabled = false;   // disable and go on our way
     }
 }
 
 // enable profiles that have real data in them (profile 1 is always enabled)
 // note that profiles 2-4 are no longer populated with profile 1's data on a fresh
 // config, and this is checking previous configs with non-copy mappings to enable them
-void profileEnabledFlagsMigration(Config& config) {
+void profileEnabledFlagsMigration(Config &config) {
     config.gpioMappings.enabled = true;
     for (uint8_t profileNum = 0; profileNum < config.profileOptions.gpioMappingsSets_count; profileNum++) {
         if (!config.profileOptions.gpioMappingsSets[profileNum].pins_count) {
@@ -1656,11 +1658,11 @@ void profileEnabledFlagsMigration(Config& config) {
             // check each pin: if the alt. mapping pin is different than the base (profile 1)
             // mapping, enable the profile and check the next one
             if (config.gpioMappings.pins[pinNum].action !=
-                        config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].action ||
-                    config.gpioMappings.pins[pinNum].customButtonMask !=
-                        config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].customButtonMask ||
-                    config.gpioMappings.pins[pinNum].customDpadMask !=
-                        config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].customDpadMask) {
+                    config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].action ||
+                config.gpioMappings.pins[pinNum].customButtonMask !=
+                    config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].customButtonMask ||
+                config.gpioMappings.pins[pinNum].customDpadMask !=
+                    config.profileOptions.gpioMappingsSets[profileNum].pins[pinNum].customDpadMask) {
                 config.profileOptions.gpioMappingsSets[profileNum].enabled = true;
                 break;
             }
@@ -1669,32 +1671,33 @@ void profileEnabledFlagsMigration(Config& config) {
     config.migrations.profileEnabledFlagsMigrated = true;
 }
 
-void migrateMacroPinsToGpio(Config& config) {
+void migrateMacroPinsToGpio(Config &config) {
     // Convert Macro pin mapping to GPIO mapping configs
-    MacroOptions & macroOptions = config.addonOptions.macroOptions;
-    if (macroOptions.has_deprecatedPin && isValidPin(macroOptions.deprecatedPin) ) {
-        Pin_t pin = macroOptions.deprecatedPin;
+    MacroOptions &macroOptions = config.addonOptions.macroOptions;
+    if (macroOptions.has_deprecatedPin && isValidPin(macroOptions.deprecatedPin)) {
+        Pin_t pin                            = macroOptions.deprecatedPin;
         config.gpioMappings.pins[pin].action = GpioAction::BUTTON_PRESS_MACRO;
-        for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES-2; profileNum++) {
+        for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES - 2; profileNum++) {
             config.profileOptions.gpioMappingsSets[profileNum].pins[pin].action = GpioAction::BUTTON_PRESS_MACRO;
         }
-        macroOptions.deprecatedPin = -1; // set our turbo options to -1 for subsequent calls
+        macroOptions.deprecatedPin     = -1; // set our turbo options to -1 for subsequent calls
         macroOptions.has_deprecatedPin = false;
     }
 
-    if ( macroOptions.macroList_count == MAX_MACRO_LIMIT ) {
-        const static GpioAction actionList[6] = { GpioAction::BUTTON_PRESS_MACRO_1, GpioAction::BUTTON_PRESS_MACRO_2,
-                                                    GpioAction::BUTTON_PRESS_MACRO_3, GpioAction::BUTTON_PRESS_MACRO_4,
-                                                    GpioAction::BUTTON_PRESS_MACRO_5, GpioAction::BUTTON_PRESS_MACRO_6 };
-        for(int i = 0; i < MAX_MACRO_LIMIT; i++ ) {
-            if ( macroOptions.macroList[i].has_deprecatedMacroTriggerPin &&
-                    isValidPin(macroOptions.macroList[i].deprecatedMacroTriggerPin) ) {
-                Pin_t pin = macroOptions.macroList[i].deprecatedMacroTriggerPin;
+    if (macroOptions.macroList_count == MAX_MACRO_LIMIT) {
+        const static GpioAction actionList[6] = {GpioAction::BUTTON_PRESS_MACRO_1, GpioAction::BUTTON_PRESS_MACRO_2,
+                                                 GpioAction::BUTTON_PRESS_MACRO_3, GpioAction::BUTTON_PRESS_MACRO_4,
+                                                 GpioAction::BUTTON_PRESS_MACRO_5, GpioAction::BUTTON_PRESS_MACRO_6};
+        for (int i = 0; i < MAX_MACRO_LIMIT; i++) {
+            if (macroOptions.macroList[i].has_deprecatedMacroTriggerPin &&
+                isValidPin(macroOptions.macroList[i].deprecatedMacroTriggerPin)) {
+                Pin_t pin                            = macroOptions.macroList[i].deprecatedMacroTriggerPin;
                 config.gpioMappings.pins[pin].action = actionList[i];
-                for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES-2; profileNum++) {
+                for (uint8_t profileNum = 0; profileNum <= MAX_PROFILES - 2; profileNum++) {
                     config.profileOptions.gpioMappingsSets[profileNum].pins[pin].action = actionList[i];
                 }
-                macroOptions.macroList[i].deprecatedMacroTriggerPin = -1; // set our turbo options to -1 for subsequent calls
+                macroOptions.macroList[i].deprecatedMacroTriggerPin =
+                    -1; // set our turbo options to -1 for subsequent calls
                 macroOptions.macroList[i].has_deprecatedMacroTriggerPin = false;
             }
         }
@@ -1704,9 +1707,8 @@ void migrateMacroPinsToGpio(Config& config) {
 // populate existing configurations' buttonsMask and auxMask to mirror behavior
 // from the behavior before this code merged. totally new configs get their
 // board defaults via initUnsetPropertiesWithDefaults
-void hotkeysMigration(Config& config)
-{
-    HotkeyOptions& hotkeys = config.hotkeyOptions;
+void hotkeysMigration(Config &config) {
+    HotkeyOptions &hotkeys = config.hotkeyOptions;
 
     // if dpadMask is defined and buttonsMask and auxMask aren't, then this
     // hotkey was saved at least once in the past when the button shortcut was
@@ -1715,38 +1717,38 @@ void hotkeysMigration(Config& config)
 
     // F1 == S1 | S2, no Fn
     if (hotkeys.hotkey01.has_dpadMask && (!hotkeys.hotkey01.has_auxMask || !hotkeys.hotkey01.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey01, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey01, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey01, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey01, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
     }
     if (hotkeys.hotkey02.has_dpadMask && (!hotkeys.hotkey02.has_auxMask || !hotkeys.hotkey02.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey02, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey02, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey02, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey02, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
     }
     if (hotkeys.hotkey03.has_dpadMask && (!hotkeys.hotkey03.has_auxMask || !hotkeys.hotkey03.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey03, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey03, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey03, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey03, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
     }
     if (hotkeys.hotkey04.has_dpadMask && (!hotkeys.hotkey04.has_auxMask || !hotkeys.hotkey04.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey04, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey04, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey04, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey04, buttonsMask, GAMEPAD_MASK_S1 | GAMEPAD_MASK_S2);
     }
 
     // F2 == S2 | A1, no Fn
     if (hotkeys.hotkey05.has_dpadMask && (!hotkeys.hotkey05.has_auxMask || !hotkeys.hotkey05.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey05, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey05, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey05, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey05, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
     }
     if (hotkeys.hotkey06.has_dpadMask && (!hotkeys.hotkey06.has_auxMask || !hotkeys.hotkey06.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey06, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey06, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey06, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey06, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
     }
     if (hotkeys.hotkey07.has_dpadMask && (!hotkeys.hotkey07.has_auxMask || !hotkeys.hotkey07.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey07, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey07, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey07, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey07, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
     }
     if (hotkeys.hotkey08.has_dpadMask && (!hotkeys.hotkey08.has_auxMask || !hotkeys.hotkey08.has_buttonsMask)) {
-	INIT_UNSET_PROPERTY(hotkeys.hotkey08, auxMask, 0);
-	INIT_UNSET_PROPERTY(hotkeys.hotkey08, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey08, auxMask, 0);
+        INIT_UNSET_PROPERTY(hotkeys.hotkey08, buttonsMask, GAMEPAD_MASK_S2 | GAMEPAD_MASK_A1);
     }
 
     config.migrations.hotkeysMigrated = true;
@@ -1766,18 +1768,13 @@ void hotkeysMigration(Config& config)
 // │Unused memory │Protobuf data                       │Footer│
 // └──────────────┴────────────────────────────────────┴──────┘
 //
-struct ConfigFooter
-{
+struct ConfigFooter {
     uint32_t dataSize;
     uint32_t dataCrc;
     uint32_t magic;
 
-    bool operator==(const ConfigFooter& other) const
-    {
-        return
-            dataSize == other.dataSize &&
-            dataCrc == other.dataCrc &&
-            magic == other.magic;
+    bool operator==(const ConfigFooter &other) const {
+        return dataSize == other.dataSize && dataCrc == other.dataCrc && magic == other.magic;
     }
 };
 
@@ -1785,35 +1782,33 @@ static const uint32_t FOOTER_MAGIC = 0xd2f1e365;
 
 // Verify that the maximum size of the serialized Config object fits into the allocated flash block
 #if defined(Config_size)
-    static_assert(Config_size + sizeof(ConfigFooter) <= EEPROM_SIZE_BYTES, "Maximum size of Config exceeds the maximum size allocated for FlashPROM");
+static_assert(Config_size + sizeof(ConfigFooter) <= EEPROM_SIZE_BYTES,
+              "Maximum size of Config exceeds the maximum size allocated for FlashPROM");
 #else
-    #error "Maximum size of Config cannot be determined statically, make sure that you do not use any dynamically sized arrays or strings"
+#error \
+    "Maximum size of Config cannot be determined statically, make sure that you do not use any dynamically sized arrays or strings"
 #endif
 
-static bool loadConfigInner(Config& config)
-{
+static bool loadConfigInner(Config &config) {
     config = Config Config_init_zero;
 
-    const uint8_t* flashEnd = reinterpret_cast<const uint8_t*>(EEPROM_ADDRESS_START) + EEPROM_SIZE_BYTES;
-    const ConfigFooter& footer = *reinterpret_cast<const ConfigFooter*>(flashEnd - sizeof(ConfigFooter));
+    const uint8_t* flashEnd    = reinterpret_cast<const uint8_t*>(EEPROM_ADDRESS_START) + EEPROM_SIZE_BYTES;
+    const ConfigFooter &footer = *reinterpret_cast<const ConfigFooter*>(flashEnd - sizeof(ConfigFooter));
 
     // Check for presence of magic value
-    if (footer.magic != FOOTER_MAGIC)
-    {
+    if (footer.magic != FOOTER_MAGIC) {
         return false;
     }
 
-        // Check if dataSize exceeds the reserved space
-    if (footer.dataSize + sizeof(ConfigFooter) > EEPROM_SIZE_BYTES)
-    {
+    // Check if dataSize exceeds the reserved space
+    if (footer.dataSize + sizeof(ConfigFooter) > EEPROM_SIZE_BYTES) {
         return false;
     }
 
     const uint8_t* dataPtr = flashEnd - sizeof(ConfigFooter) - footer.dataSize;
 
     // Verify CRC32 hash
-    if (CRC32::calculate(dataPtr, footer.dataSize) != footer.dataCrc)
-    {
+    if (CRC32::calculate(dataPtr, footer.dataSize) != footer.dataCrc) {
         return false;
     }
 
@@ -1822,21 +1817,20 @@ static bool loadConfigInner(Config& config)
     return pb_decode(&inputStream, Config_fields, &config);
 }
 
-void ConfigUtils::load(Config& config)
-{
+void ConfigUtils::load(Config &config) {
     // First try to load from Protobuf storage, if that fails fall back to legacy storage.
     const bool loaded = loadConfigInner(config) | fromLegacyStorage(config);
 
-    if (!loaded)
-    {
+    if (!loaded) {
         // We could neither deserialize Protobuf config data nor legacy config data.
         // We are probably dealing with a new device and therefore initialize the config to default values.
         config = Config Config_init_default;
     }
 
     // run migrations
-    if (!config.migrations.hotkeysMigrated)
+    if (!config.migrations.hotkeysMigrated) {
         hotkeysMigration(config);
+    }
 
     // Make sure that fields that were not deserialized are properly initialized.
     // They were probably added with a newer version of the firmware.
@@ -1844,12 +1838,14 @@ void ConfigUtils::load(Config& config)
 
     // Run migrations that need to happen after initUnset...
     // ProtoBuf && Board Config settings are loaded here
-    if (!config.migrations.gpioMappingsMigrated)
+    if (!config.migrations.gpioMappingsMigrated) {
         gpioMappingsMigrationCore(config);
+    }
 
     // Run migration to enable or disable pre-existing profiles
-    if (!config.migrations.profileEnabledFlagsMigrated)
+    if (!config.migrations.profileEnabledFlagsMigrated) {
         profileEnabledFlagsMigration(config);
+    }
 
     // following migrations are simple enough to not need a protobuf boolean to track
     // Migrate turbo into GpioMappings
@@ -1864,34 +1860,28 @@ void ConfigUtils::load(Config& config)
     // Update boardVersion, in case we migrated from an older version
     strncpy(config.boardVersion, GP2040VERSION, sizeof(config.boardVersion));
     config.boardVersion[sizeof(config.boardVersion) - 1] = '\0';
-    config.has_boardVersion = true;
+    config.has_boardVersion                              = true;
 
     // Save, to make sure we persist any performed migration steps
     save(config);
 }
 
-static void setHasFlags(const pb_msgdesc_t* fields, void* s)
-{
+static void setHasFlags(const pb_msgdesc_t* fields, void* s) {
     pb_field_iter_t iter;
-    if (!pb_field_iter_begin(&iter, fields, s))
-    {
+    if (!pb_field_iter_begin(&iter, fields, s)) {
         return;
     }
 
-    do
-    {
+    do {
         // Not implemented for extension fields
         assert(PB_LTYPE(iter.type) != PB_LTYPE_EXTENSION);
 
-        switch (PB_HTYPE(iter.type))
-        {
-            case PB_HTYPE_OPTIONAL:
-            {
+        switch (PB_HTYPE(iter.type)) {
+            case PB_HTYPE_OPTIONAL: {
                 *reinterpret_cast<bool*>(iter.pSize) = true;
 
                 // Recurse into sub-messages
-                if (PB_LTYPE(iter.type) == PB_LTYPE_SUBMESSAGE)
-                {
+                if (PB_LTYPE(iter.type) == PB_LTYPE_SUBMESSAGE) {
                     assert(iter.submsg_desc);
                     assert(iter.pData);
 
@@ -1900,19 +1890,16 @@ static void setHasFlags(const pb_msgdesc_t* fields, void* s)
                 break;
             }
 
-            case PB_HTYPE_REPEATED:
-            {
+            case PB_HTYPE_REPEATED: {
                 // Recurse into sub-messages
-                if (PB_LTYPE(iter.type) == PB_LTYPE_SUBMESSAGE)
-                {
+                if (PB_LTYPE(iter.type) == PB_LTYPE_SUBMESSAGE) {
                     assert(iter.submsg_desc);
                     assert(iter.pData);
                     assert(iter.pSize);
 
                     const pb_size_t array_size = *reinterpret_cast<pb_size_t*>(iter.pSize);
-                    pb_byte_t* item_ptr = reinterpret_cast<pb_byte_t*>(iter.pData);
-                    for (pb_size_t index = 0; index < array_size; ++index)
-                    {
+                    pb_byte_t* item_ptr        = reinterpret_cast<pb_byte_t*>(iter.pData);
+                    for (pb_size_t index = 0; index < array_size; ++index) {
                         setHasFlags(iter.submsg_desc, item_ptr);
                         item_ptr += iter.data_size;
                     }
@@ -1928,12 +1915,10 @@ static void setHasFlags(const pb_msgdesc_t* fields, void* s)
     } while (pb_field_iter_next(&iter));
 }
 
-bool ConfigUtils::save(Config& config)
-{
+bool ConfigUtils::save(Config &config) {
     // We only allow saves from core0. Saves from core1 have to be marshalled to core0.
     assert(get_core_num() == 0);
-    if (get_core_num() != 0)
-    {
+    if (get_core_num() != 0) {
         return false;
     }
 
@@ -1944,31 +1929,32 @@ bool ConfigUtils::save(Config& config)
 
     // Encode the data directly into the cache of FlashPROM
     pb_ostream_t outputStream = pb_ostream_from_buffer(EEPROM.writeCache, EEPROM_SIZE_BYTES - sizeof(ConfigFooter));
-    if (!pb_encode(&outputStream, Config_fields, &config))
-    {
+    if (!pb_encode(&outputStream, Config_fields, &config)) {
         return false;
     }
 
     // Create the new footer
     ConfigFooter newFooter;
     newFooter.dataSize = outputStream.bytes_written;
-    newFooter.dataCrc = CRC32::calculate(EEPROM.writeCache, newFooter.dataSize);
-    newFooter.magic = FOOTER_MAGIC;
+    newFooter.dataCrc  = CRC32::calculate(EEPROM.writeCache, newFooter.dataSize);
+    newFooter.magic    = FOOTER_MAGIC;
 
     // The data has changed when the footer content has changed. Only then do we acutally need to save.
-    const ConfigFooter& oldFooter = *reinterpret_cast<ConfigFooter*>(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter));
-    if (newFooter == oldFooter)
-    {
+    const ConfigFooter &oldFooter =
+        *reinterpret_cast<ConfigFooter*>(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter));
+    if (newFooter == oldFooter) {
         // The data has not changed, no saving neccessary.
         return true;
     }
 
     // Write the footer
-    ConfigFooter* cacheFooter = reinterpret_cast<ConfigFooter*>(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter));
+    ConfigFooter* cacheFooter =
+        reinterpret_cast<ConfigFooter*>(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter));
     memcpy(cacheFooter, &newFooter, sizeof(ConfigFooter));
 
     // Move the encoded data in memory down to the footer
-    memmove(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter) - newFooter.dataSize, EEPROM.writeCache, newFooter.dataSize);
+    memmove(EEPROM.writeCache + EEPROM_SIZE_BYTES - sizeof(ConfigFooter) - newFooter.dataSize, EEPROM.writeCache,
+            newFooter.dataSize);
     memset(EEPROM.writeCache, 0, EEPROM_SIZE_BYTES - sizeof(ConfigFooter) - newFooter.dataSize);
 
     EEPROM.commit();
@@ -1980,114 +1966,119 @@ bool ConfigUtils::save(Config& config)
 // To JSON
 // -----------------------------------------------------
 
-static void writeIndentation(std::string& str, int level)
-{
+static void writeIndentation(std::string &str, int level) {
     str.append(static_cast<std::string::size_type>(level), '\t');
 }
 
 // Don't inline this function, we do not want to consume stack space in the calling function
-static void __attribute__((noinline)) appendAsString(std::string& str, double value)
-{
+static void __attribute__((noinline)) appendAsString(std::string &str, double value) {
     str.append(std::to_string(value));
 }
 
 // Don't inline this function, we do not want to consume stack space in the calling function
-static void __attribute__((noinline)) appendAsString(std::string& str, float value)
-{
+static void __attribute__((noinline)) appendAsString(std::string &str, float value) {
     str.append(std::to_string(value));
 }
 
 // Don't inline this function, we do not want to consume stack space in the calling function
-static void __attribute__((noinline)) appendAsString(std::string& str, int32_t value)
-{
+static void __attribute__((noinline)) appendAsString(std::string &str, int32_t value) {
     str.append(std::to_string(value));
 }
 
 // Don't inline this function, we do not want to consume stack space in the calling function
-static void __attribute__((noinline)) appendAsString(std::string& str, uint32_t value)
-{
+static void __attribute__((noinline)) appendAsString(std::string &str, uint32_t value) {
     str.append(std::to_string(value));
 }
 
-#define TO_JSON_ENUM(fieldname, submessageType) appendAsString(str, static_cast<int32_t>(s.fieldname));
-#define TO_JSON_UENUM(fieldname, submessageType) appendAsString(str, static_cast<uint32_t>(s.fieldname));
+#define TO_JSON_ENUM(fieldname, submessageType)   appendAsString(str, static_cast<int32_t>(s.fieldname));
+#define TO_JSON_UENUM(fieldname, submessageType)  appendAsString(str, static_cast<uint32_t>(s.fieldname));
 #define TO_JSON_DOUBLE(fieldname, submessageType) appendAsString(str, static_cast<double>(s.fieldname));
-#define TO_JSON_FLOAT(fieldname, submessageType) appendAsString(str, static_cast<float>(s.fieldname));
-#define TO_JSON_INT32(fieldname, submessageType) appendAsString(str, s.fieldname);
+#define TO_JSON_FLOAT(fieldname, submessageType)  appendAsString(str, static_cast<float>(s.fieldname));
+#define TO_JSON_INT32(fieldname, submessageType)  appendAsString(str, s.fieldname);
 #define TO_JSON_UINT32(fieldname, submessageType) appendAsString(str, s.fieldname);
-#define TO_JSON_BOOL(fieldname, submessageType) str.append((s.fieldname) ? "true" : "false");
-#define TO_JSON_STRING(fieldname, submessageType) str.push_back('"'); str.append(s.fieldname); str.push_back('"');
-#define TO_JSON_BYTES(fieldname, submessageType) str.push_back('"'); str.append(Base64::Encode(reinterpret_cast<const char*>(s.fieldname.bytes), s.fieldname.size)); str.push_back('"');
-#define TO_JSON_MESSAGE(fieldname, submessageType) PREPROCESSOR_JOIN(toJSON, submessageType)(str, s.fieldname, indentLevel + 1);
+#define TO_JSON_BOOL(fieldname, submessageType)   str.append((s.fieldname) ? "true" : "false");
+#define TO_JSON_STRING(fieldname, submessageType) \
+    str.push_back('"');                           \
+    str.append(s.fieldname);                      \
+    str.push_back('"');
+#define TO_JSON_BYTES(fieldname, submessageType)                                                    \
+    str.push_back('"');                                                                             \
+    str.append(Base64::Encode(reinterpret_cast<const char*>(s.fieldname.bytes), s.fieldname.size)); \
+    str.push_back('"');
+#define TO_JSON_MESSAGE(fieldname, submessageType)                                \
+    PREPROCESSOR_JOIN(toJSON, submessageType)(str, s.fieldname, indentLevel + 1);
 
-#define TO_JSON_REPEATED_ENUM(fieldname, submessageType) appendAsString(str, static_cast<int32_t>(s.fieldname[i]));
-#define TO_JSON_REPEATED_UENUM(fieldname, submessageType) appendAsString(str, static_cast<uint32_t>(s.fieldname[i]));
+#define TO_JSON_REPEATED_ENUM(fieldname, submessageType)   appendAsString(str, static_cast<int32_t>(s.fieldname[i]));
+#define TO_JSON_REPEATED_UENUM(fieldname, submessageType)  appendAsString(str, static_cast<uint32_t>(s.fieldname[i]));
 #define TO_JSON_REPEATED_DOUBLE(fieldname, submessageType) appendAsString(str, static_cast<double>(s.fieldname[i]));
-#define TO_JSON_REPEATED_FLOAT(fieldname, submessageType) appendAsString(str, static_cast<float>(s.fieldname[i]));
-#define TO_JSON_REPEATED_INT32(fieldname, submessageType) appendAsString(str, s.fieldname[i]);
+#define TO_JSON_REPEATED_FLOAT(fieldname, submessageType)  appendAsString(str, static_cast<float>(s.fieldname[i]));
+#define TO_JSON_REPEATED_INT32(fieldname, submessageType)  appendAsString(str, s.fieldname[i]);
 #define TO_JSON_REPEATED_UINT32(fieldname, submessageType) appendAsString(str, s.fieldname[i]);
-#define TO_JSON_REPEATED_BOOL(fieldname, submessageType) str.append((s.fieldname[i]) ? "true" : "false");
-#define TO_JSON_REPEATED_STRING(fieldname, submessageType) str.push_back('"'); str.append(s.fieldname[i]); str.push_back('"');
+#define TO_JSON_REPEATED_BOOL(fieldname, submessageType)   str.append((s.fieldname[i]) ? "true" : "false");
+#define TO_JSON_REPEATED_STRING(fieldname, submessageType) \
+    str.push_back('"');                                    \
+    str.append(s.fieldname[i]);                            \
+    str.push_back('"');
 #define TO_JSON_REPEATED_BYTES(fieldname, submessageType) static_assert(false, "not supported");
-#define TO_JSON_REPEATED_MESSAGE(fieldname, submessageType) PREPROCESSOR_JOIN(toJSON, submessageType)(str, s.fieldname[i], indentLevel + 1);
+#define TO_JSON_REPEATED_MESSAGE(fieldname, submessageType)                          \
+    PREPROCESSOR_JOIN(toJSON, submessageType)(str, s.fieldname[i], indentLevel + 1);
 
-#define TO_JSON_REPEATED(ltype, fieldname, submessageType) \
-    str.append("["); \
-    for (int i = 0; i < s.PREPROCESSOR_JOIN(fieldname, _count); ++i) \
-    { \
-        if (i != 0) str.append(",");\
-        str.append("\n"); \
-        writeIndentation(str, indentLevel + 1); \
+#define TO_JSON_REPEATED(ltype, fieldname, submessageType)                     \
+    str.append("[");                                                           \
+    for (int i = 0; i < s.PREPROCESSOR_JOIN(fieldname, _count); ++i) {         \
+        if (i != 0)                                                            \
+            str.append(",");                                                   \
+        str.append("\n");                                                      \
+        writeIndentation(str, indentLevel + 1);                                \
         PREPROCESSOR_JOIN(TO_JSON_REPEATED_, ltype)(fieldname, submessageType) \
-    } \
-    str.append("\n"); \
-    writeIndentation(str, indentLevel); \
-    str.append("]"); \
+    }                                                                          \
+    str.append("\n");                                                          \
+    writeIndentation(str, indentLevel);                                        \
+    str.append("]");
 
 #define TO_JSON_REQUIRED(ltype, fieldname, submessageType) PREPROCESSOR_JOIN(TO_JSON_, ltype)(fieldname, submessageType)
 #define TO_JSON_OPTIONAL(ltype, fieldname, submessageType) PREPROCESSOR_JOIN(TO_JSON_, ltype)(fieldname, submessageType)
 #define TO_JSON_SINGULAR(ltype, fieldname, submessageType) static_assert(false, "not supported");
 #define TO_JSON_FIXARRAY(ltype, fieldname, submessageType) static_assert(false, "not supported");
-#define TO_JSON_ONEOF(ltype, fieldname, submessageType) static_assert(false, "not supported");
+#define TO_JSON_ONEOF(ltype, fieldname, submessageType)    static_assert(false, "not supported");
 
-#define TO_JSON_STATIC(htype, ltype, fieldname, submessageType) PREPROCESSOR_JOIN(TO_JSON_, htype)(ltype, fieldname, submessageType)
-#define TO_JSON_POINTER(htype, ltype, fieldname, submessageType) static_assert(false, "not supported");
+#define TO_JSON_STATIC(htype, ltype, fieldname, submessageType)          \
+    PREPROCESSOR_JOIN(TO_JSON_, htype)(ltype, fieldname, submessageType)
+#define TO_JSON_POINTER(htype, ltype, fieldname, submessageType)  static_assert(false, "not supported");
 #define TO_JSON_CALLBACK(htype, ltype, fieldname, submessageType) static_assert(false, "not supported");
 
-#define TO_JSON_FIELD(parenttype, atype, htype, ltype, fieldname, tag, disallow_export) \
-    if (!disallow_export) \
-    { \
-        if (!firstField) str.append(",\n"); \
-        firstField = false; \
-        writeIndentation(str, indentLevel); \
-        str.append("\"" #fieldname "\": "); \
-        PREPROCESSOR_JOIN(TO_JSON_, atype)(htype, ltype, fieldname, parenttype ## _ ## fieldname ## _MSGTYPE) \
+#define TO_JSON_FIELD(parenttype, atype, htype, ltype, fieldname, tag, disallow_export)                 \
+    if (!disallow_export) {                                                                             \
+        if (!firstField)                                                                                \
+            str.append(",\n");                                                                          \
+        firstField = false;                                                                             \
+        writeIndentation(str, indentLevel);                                                             \
+        str.append("\"" #fieldname "\": ");                                                             \
+        PREPROCESSOR_JOIN(TO_JSON_, atype)(htype, ltype, fieldname, parenttype##_##fieldname##_MSGTYPE) \
     }
 
-#define GEN_TO_JSON_FUNCTION_DECL(structtype) static void toJSON ## structtype(std::string& str, const structtype& s, int indentLevel);
+#define GEN_TO_JSON_FUNCTION_DECL(structtype)                                               \
+    static void toJSON##structtype(std::string &str, const structtype &s, int indentLevel);
 
-#define GEN_TO_JSON_FUNCTION(structtype) \
-    static void toJSON ## structtype(std::string& str, const structtype& s, int indentLevel) \
-    { \
-        bool firstField = true; \
-        str.append("{\n"); \
-        structtype ## _FIELDLIST(TO_JSON_FIELD, structtype) \
-        str.push_back('\n'); \
-        writeIndentation(str, indentLevel - 1); \
-        str.push_back('}'); \
-    } \
+#define GEN_TO_JSON_FUNCTION(structtype)                                                     \
+    static void toJSON##structtype(std::string &str, const structtype &s, int indentLevel) { \
+        bool firstField = true;                                                              \
+        str.append("{\n");                                                                   \
+        structtype##_FIELDLIST(TO_JSON_FIELD, structtype) str.push_back('\n');               \
+        writeIndentation(str, indentLevel - 1);                                              \
+        str.push_back('}');                                                                  \
+    }
 
 #if defined(CONFIG_MESSAGES_GP2040)
-    CONFIG_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION_DECL)
-    CONFIG_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION)
+CONFIG_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION_DECL)
+CONFIG_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION)
 #endif
 #if defined(ENUM_MESSAGES_GP2040)
-    ENUM_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION_DECL)
-    ENUM_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION)
+ENUM_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION_DECL)
+ENUM_MESSAGES_GP2040(GEN_TO_JSON_FUNCTION)
 #endif
 
-std::string ConfigUtils::toJSON(const Config& config)
-{
+std::string ConfigUtils::toJSON(const Config &config) {
     std::string str;
     str.reserve(1024 * 4);
     toJSONConfig(str, config, 1);
@@ -2100,81 +2091,62 @@ std::string ConfigUtils::toJSON(const Config& config)
 // From JSON
 // -----------------------------------------------------
 
-#define TEST_VALUE(name, value) if (v == value) return true;
+#define TEST_VALUE(name, value) \
+    if (v == value)             \
+        return true;
 
-#define GEN_IS_VALID_ENUM_VALUE_FUNCTION(enumtype) \
-    static bool isValid ## enumtype(int v) \
-    { \
-        PREPROCESSOR_JOIN(enumtype, _VALUELIST)(TEST_VALUE) \
-        return false; \
+#define GEN_IS_VALID_ENUM_VALUE_FUNCTION(enumtype)                        \
+    static bool isValid##enumtype(int v) {                                \
+        PREPROCESSOR_JOIN(enumtype, _VALUELIST)(TEST_VALUE) return false; \
     }
 
 #if defined(CONFIG_ENUMS_GP2040)
-    CONFIG_ENUMS_GP2040(GEN_IS_VALID_ENUM_VALUE_FUNCTION)
+CONFIG_ENUMS_GP2040(GEN_IS_VALID_ENUM_VALUE_FUNCTION)
 #endif
 #if defined(ENUMS_ENUMS_GP2040)
-    ENUMS_ENUMS_GP2040(GEN_IS_VALID_ENUM_VALUE_FUNCTION)
+ENUMS_ENUMS_GP2040(GEN_IS_VALID_ENUM_VALUE_FUNCTION)
 #endif
 
-#define FROM_JSON_ENUM(fieldname, enumType) \
-    if (jsonObject.containsKey(#fieldname)) \
-    { \
-        JsonVariantConst value = jsonObject[#fieldname]; \
-        if (value.is<int>()) \
-        { \
-            const int v = value.as<int>(); \
-            if (PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(v)) \
-            { \
-                configStruct.fieldname = static_cast<decltype(configStruct.fieldname)>(v); \
-                configStruct.PREPROCESSOR_JOIN(has_, fieldname) = true; \
-            } \
-            else \
-            { \
-                return false; \
-            } \
-        } \
-        else \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_ENUM(fieldname, enumType)                                                                         \
+    if (jsonObject.containsKey(#fieldname)) {                                                                       \
+        JsonVariantConst value = jsonObject[#fieldname];                                                            \
+        if (value.is<int>()) {                                                                                      \
+            const int v = value.as<int>();                                                                          \
+            if (PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(v)) {                            \
+                configStruct.fieldname                          = static_cast<decltype(configStruct.fieldname)>(v); \
+                configStruct.PREPROCESSOR_JOIN(has_, fieldname) = true;                                             \
+            } else {                                                                                                \
+                return false;                                                                                       \
+            }                                                                                                       \
+        } else {                                                                                                    \
+            return false;                                                                                           \
+        }                                                                                                           \
     }
 
-#define FROM_JSON_UENUM(fieldname, enumType) \
-    if (jsonObject.containsKey(#fieldname)) \
-    { \
-        JsonVariantConst value = jsonObject[#fieldname]; \
-        if (value.is<unsigned int>()) \
-        { \
-            const unsigned int v = value.as<unsigned int>(); \
-            if (PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(v)) \
-            { \
-                configStruct.fieldname = static_cast<decltype(configStruct.fieldname)>(v); \
-                configStruct.PREPROCESSOR_JOIN(has_, fieldname) = true; \
-            } \
-            else \
-            { \
-                return false; \
-            } \
-        } \
-        else \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_UENUM(fieldname, enumType)                                                                        \
+    if (jsonObject.containsKey(#fieldname)) {                                                                       \
+        JsonVariantConst value = jsonObject[#fieldname];                                                            \
+        if (value.is<unsigned int>()) {                                                                             \
+            const unsigned int v = value.as<unsigned int>();                                                        \
+            if (PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(v)) {                            \
+                configStruct.fieldname                          = static_cast<decltype(configStruct.fieldname)>(v); \
+                configStruct.PREPROCESSOR_JOIN(has_, fieldname) = true;                                             \
+            } else {                                                                                                \
+                return false;                                                                                       \
+            }                                                                                                       \
+        } else {                                                                                                    \
+            return false;                                                                                           \
+        }                                                                                                           \
     }
 
-static bool fromJsonDouble(JsonObjectConst jsonObject, const char* fieldname, double& value, bool& flag)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+static bool fromJsonDouble(JsonObjectConst jsonObject, const char* fieldname, double &value, bool &flag) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst jsonVariant = jsonObject[fieldname];
-        if (jsonVariant.is<double>())
-        {
+        if (jsonVariant.is<double>()) {
             value = jsonVariant.as<double>();
-            flag = true;
+            flag  = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -2182,21 +2154,20 @@ static bool fromJsonDouble(JsonObjectConst jsonObject, const char* fieldname, do
     return true;
 }
 
-#define FROM_JSON_DOUBLE(fieldname, submessageType) if (!fromJsonDouble(jsonObject, #fieldname, configStruct.fieldname, configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { return false; }
+#define FROM_JSON_DOUBLE(fieldname, submessageType)                         \
+    if (!fromJsonDouble(jsonObject, #fieldname, configStruct.fieldname,     \
+                        configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { \
+        return false;                                                       \
+    }
 
-static bool fromJsonFloat(JsonObjectConst jsonObject, const char* fieldname, float& value, bool& flag)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+static bool fromJsonFloat(JsonObjectConst jsonObject, const char* fieldname, float &value, bool &flag) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst jsonVariant = jsonObject[fieldname];
-        if (jsonVariant.is<float>())
-        {
+        if (jsonVariant.is<float>()) {
             value = jsonVariant.as<float>();
-            flag = true;
+            flag  = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -2204,21 +2175,20 @@ static bool fromJsonFloat(JsonObjectConst jsonObject, const char* fieldname, flo
     return true;
 }
 
-#define FROM_JSON_FLOAT(fieldname, submessageType) if (!fromJsonFloat(jsonObject, #fieldname, configStruct.fieldname, configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { return false; }
+#define FROM_JSON_FLOAT(fieldname, submessageType)                         \
+    if (!fromJsonFloat(jsonObject, #fieldname, configStruct.fieldname,     \
+                       configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { \
+        return false;                                                      \
+    }
 
-static bool fromJsonInt32(JsonObjectConst jsonObject, const char* fieldname, int32_t& value, bool& flag)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+static bool fromJsonInt32(JsonObjectConst jsonObject, const char* fieldname, int32_t &value, bool &flag) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst jsonVariant = jsonObject[fieldname];
-        if (jsonVariant.is<int>())
-        {
+        if (jsonVariant.is<int>()) {
             value = jsonVariant.as<int>();
-            flag = true;
+            flag  = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -2226,21 +2196,20 @@ static bool fromJsonInt32(JsonObjectConst jsonObject, const char* fieldname, int
     return true;
 }
 
-#define FROM_JSON_INT32(fieldname, submessageType) if (!fromJsonInt32(jsonObject, #fieldname, configStruct.fieldname, configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { return false; }
+#define FROM_JSON_INT32(fieldname, submessageType)                         \
+    if (!fromJsonInt32(jsonObject, #fieldname, configStruct.fieldname,     \
+                       configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { \
+        return false;                                                      \
+    }
 
-static bool fromJsonUint32(JsonObjectConst jsonObject, const char* fieldname, uint32_t& value, bool& flag)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+static bool fromJsonUint32(JsonObjectConst jsonObject, const char* fieldname, uint32_t &value, bool &flag) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst jsonVariant = jsonObject[fieldname];
-        if (jsonVariant.is<unsigned int>())
-        {
+        if (jsonVariant.is<unsigned int>()) {
             value = jsonVariant.as<unsigned int>();
-            flag = true;
+            flag  = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -2248,21 +2217,20 @@ static bool fromJsonUint32(JsonObjectConst jsonObject, const char* fieldname, ui
     return true;
 }
 
-#define FROM_JSON_UINT32(fieldname, submessageType) if (!fromJsonUint32(jsonObject, #fieldname, configStruct.fieldname, configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { return false; }
+#define FROM_JSON_UINT32(fieldname, submessageType)                         \
+    if (!fromJsonUint32(jsonObject, #fieldname, configStruct.fieldname,     \
+                        configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { \
+        return false;                                                       \
+    }
 
-static bool fromJsonBool(JsonObjectConst jsonObject, const char* fieldname, bool& value, bool& flag)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+static bool fromJsonBool(JsonObjectConst jsonObject, const char* fieldname, bool &value, bool &flag) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst jsonVariant = jsonObject[fieldname];
-        if (jsonVariant.is<bool>())
-        {
+        if (jsonVariant.is<bool>()) {
             value = jsonVariant.as<bool>();
-            flag = true;
+            flag  = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -2270,53 +2238,52 @@ static bool fromJsonBool(JsonObjectConst jsonObject, const char* fieldname, bool
     return true;
 }
 
-#define FROM_JSON_BOOL(fieldname, submessageType) if (!fromJsonBool(jsonObject, #fieldname, configStruct.fieldname, configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { return false; }
-
-#define FROM_JSON_STRING(fieldname, submessageType) \
-    if (jsonObject.containsKey(#fieldname)) \
-    { \
-        JsonVariantConst value = jsonObject[#fieldname]; \
-        if (value.is<const char*>() && strlen(value.as<const char*>()) < sizeof(configStruct.fieldname)) \
-        { \
-            strncpy(configStruct.fieldname, value.as<const char*>(), sizeof(configStruct.fieldname)); \
-            configStruct.fieldname[sizeof(configStruct.fieldname) - 1] = '\0'; \
-            configStruct.PREPROCESSOR_JOIN(has_, fieldname) = true; \
-        } \
-        else \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_BOOL(fieldname, submessageType)                         \
+    if (!fromJsonBool(jsonObject, #fieldname, configStruct.fieldname,     \
+                      configStruct.PREPROCESSOR_JOIN(has_, fieldname))) { \
+        return false;                                                     \
     }
 
-static bool fromJsonBytes(JsonObjectConst jsonObject, const char* fieldname, uint8_t* bytes, uint16_t& size, size_t maxSize)
-{
-    if (jsonObject.containsKey(fieldname))
-    {
+#define FROM_JSON_STRING(fieldname, submessageType)                                                        \
+    if (jsonObject.containsKey(#fieldname)) {                                                              \
+        JsonVariantConst value = jsonObject[#fieldname];                                                   \
+        if (value.is<const char*>() && strlen(value.as<const char*>()) < sizeof(configStruct.fieldname)) { \
+            strncpy(configStruct.fieldname, value.as<const char*>(), sizeof(configStruct.fieldname));      \
+            configStruct.fieldname[sizeof(configStruct.fieldname) - 1] = '\0';                             \
+            configStruct.PREPROCESSOR_JOIN(has_, fieldname)            = true;                             \
+        } else {                                                                                           \
+            return false;                                                                                  \
+        }                                                                                                  \
+    }
+
+static bool fromJsonBytes(JsonObjectConst jsonObject, const char* fieldname, uint8_t* bytes, uint16_t &size,
+                          size_t maxSize) {
+    if (jsonObject.containsKey(fieldname)) {
         JsonVariantConst value = jsonObject[fieldname];
-        if (!value.is<const char*>())
-        {
+        if (!value.is<const char*>()) {
             return false;
         }
-        const char* str = value.as<const char*>();
+        const char* str        = value.as<const char*>();
         const size_t strLength = strlen(str);
 
         // Length of Base64 encoded data has to be divisible by 4
-        if (strLength % 4 != 0)
-        {
+        if (strLength % 4 != 0) {
             return false;
         }
 
         size_t decodedLength = strLength / 4 * 3;
-        if (strLength >= 1 && str[strLength - 1] == '=') --decodedLength;
-        if (strLength >= 2 && str[strLength - 2] == '=') --decodedLength;
-        if (decodedLength > maxSize)
-        {
+        if (strLength >= 1 && str[strLength - 1] == '=') {
+            --decodedLength;
+        }
+        if (strLength >= 2 && str[strLength - 2] == '=') {
+            --decodedLength;
+        }
+        if (decodedLength > maxSize) {
             return false;
         }
 
         std::string decoded;
-        if (!Base64::Decode(str, strLength, decoded))
-        {
+        if (!Base64::Decode(str, strLength, decoded)) {
             return false;
         }
         memcpy(bytes, decoded.data(), decoded.length());
@@ -2326,164 +2293,154 @@ static bool fromJsonBytes(JsonObjectConst jsonObject, const char* fieldname, uin
     return true;
 }
 
-#define FROM_JSON_BYTES(fieldname, submessageType) if (!fromJsonBytes(jsonObject, #fieldname, configStruct.fieldname.bytes, configStruct.fieldname.size, sizeof(configStruct.fieldname.bytes))) return false;
+#define FROM_JSON_BYTES(fieldname, submessageType)                                                        \
+    if (!fromJsonBytes(jsonObject, #fieldname, configStruct.fieldname.bytes, configStruct.fieldname.size, \
+                       sizeof(configStruct.fieldname.bytes)))                                             \
+        return false;
 
-#define FROM_JSON_MESSAGE(fieldname, submessageType) \
-    if (jsonObject.containsKey(#fieldname)) \
-    { \
-        JsonVariantConst value = jsonObject[#fieldname]; \
-        if (!value.is<JsonObjectConst>() || !PREPROCESSOR_JOIN(fromJSON, PREPROCESSOR_JOIN(submessageType, _MSGTYPE))(value.as<JsonObjectConst>(), configStruct.fieldname)) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_MESSAGE(fieldname, submessageType)                                                                   \
+    if (jsonObject.containsKey(#fieldname)) {                                                                          \
+        JsonVariantConst value = jsonObject[#fieldname];                                                               \
+        if (!value.is<JsonObjectConst>() || !PREPROCESSOR_JOIN(fromJSON, PREPROCESSOR_JOIN(submessageType, _MSGTYPE))( \
+                                                value.as<JsonObjectConst>(), configStruct.fieldname)) {                \
+            return false;                                                                                              \
+        }                                                                                                              \
     }
 
-#define FROM_JSON_REPEATED_ENUM(fieldname, enumType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<int>() || !PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(array[index].as<int>())) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_REPEATED_ENUM(fieldname, enumType)                                                                 \
+    configStruct.fieldname##_count = 0;                                                                              \
+    for (size_t index = 0; index < array.size(); ++index) {                                                          \
+        if (!array[index].is<int>() ||                                                                               \
+            !PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(array[index].as<int>())) {           \
+            return false;                                                                                            \
+        }                                                                                                            \
         configStruct.fieldname[index] = static_cast<PREPROCESSOR_JOIN(enumType, _ENUMTYPE)>(array[index].as<int>()); \
-        ++configStruct.fieldname ## _count; \
+        ++configStruct.fieldname##_count;                                                                            \
     }
 
-#define FROM_JSON_REPEATED_UENUM(fieldname, enumType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<unsigned int>() || !PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(array[index].as<unsigned int>())) \
-        { \
-            return false; \
-        } \
-        configStruct.fieldname[index] = static_cast<PREPROCESSOR_JOIN(enumType, _ENUMTYPE)>(array[index].as<unsigned int>()); \
-        ++configStruct.fieldname ## _count; \
+#define FROM_JSON_REPEATED_UENUM(fieldname, enumType)                                                               \
+    configStruct.fieldname##_count = 0;                                                                             \
+    for (size_t index = 0; index < array.size(); ++index) {                                                         \
+        if (!array[index].is<unsigned int>() ||                                                                     \
+            !PREPROCESSOR_JOIN(isValid, PREPROCESSOR_JOIN(enumType, _ENUMTYPE))(array[index].as<unsigned int>())) { \
+            return false;                                                                                           \
+        }                                                                                                           \
+        configStruct.fieldname[index] =                                                                             \
+            static_cast<PREPROCESSOR_JOIN(enumType, _ENUMTYPE)>(array[index].as<unsigned int>());                   \
+        ++configStruct.fieldname##_count;                                                                           \
     }
 
-#define FROM_JSON_REPEATED_INT32(fieldname, submessageType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<int>()) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_REPEATED_INT32(fieldname, submessageType)     \
+    configStruct.fieldname##_count = 0;                         \
+    for (size_t index = 0; index < array.size(); ++index) {     \
+        if (!array[index].is<int>()) {                          \
+            return false;                                       \
+        }                                                       \
         configStruct.fieldname[index] = array[index].as<int>(); \
-        ++configStruct.fieldname ## _count; \
+        ++configStruct.fieldname##_count;                       \
     }
 
-#define FROM_JSON_REPEATED_UINT32(fieldname, submessageType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<unsigned int>()) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_REPEATED_UINT32(fieldname, submessageType)             \
+    configStruct.fieldname##_count = 0;                                  \
+    for (size_t index = 0; index < array.size(); ++index) {              \
+        if (!array[index].is<unsigned int>()) {                          \
+            return false;                                                \
+        }                                                                \
         configStruct.fieldname[index] = array[index].as<unsigned int>(); \
-        ++configStruct.fieldname ## _count; \
+        ++configStruct.fieldname##_count;                                \
     }
 
-#define FROM_JSON_REPEATED_BOOL(fieldname, submessageType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<bool>()) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_REPEATED_BOOL(fieldname, submessageType)       \
+    configStruct.fieldname##_count = 0;                          \
+    for (size_t index = 0; index < array.size(); ++index) {      \
+        if (!array[index].is<bool>()) {                          \
+            return false;                                        \
+        }                                                        \
         configStruct.fieldname[index] = array[index].as<bool>(); \
-        ++configStruct.fieldname ## _count; \
+        ++configStruct.fieldname##_count;                        \
     }
 
-#define FROM_JSON_REPEATED_STRING(fieldname, submessageType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<const char*>() || strlen(array[index].as<const char*>()) >= sizeof(configStruct.fieldname[index])) \
-        { \
-            return false; \
-        } \
+#define FROM_JSON_REPEATED_STRING(fieldname, submessageType)                                                           \
+    configStruct.fieldname##_count = 0;                                                                                \
+    for (size_t index = 0; index < array.size(); ++index) {                                                            \
+        if (!array[index].is<const char*>() ||                                                                         \
+            strlen(array[index].as<const char*>()) >= sizeof(configStruct.fieldname[index])) {                         \
+            return false;                                                                                              \
+        }                                                                                                              \
         strncpy(configStruct.fieldname[index], array[index].as<const char*>(), sizeof(configStruct.fieldname[index])); \
-        configStruct.fieldname[index][sizeof(configStruct.fieldname[index]) - 1] = '\0'; \
-        ++configStruct.fieldname ## _count; \
+        configStruct.fieldname[index][sizeof(configStruct.fieldname[index]) - 1] = '\0';                               \
+        ++configStruct.fieldname##_count;                                                                              \
     }
 
 #define FROM_JSON_REPEATED_BYTES(fieldname, submessageType) static_assert(false, "not supported");
 
-#define FROM_JSON_REPEATED_MESSAGE(fieldname, submessageType) \
-    configStruct.fieldname ## _count = 0; \
-    for (size_t index = 0; index < array.size(); ++index) \
-    { \
-        if (!array[index].is<JsonObjectConst>() || !PREPROCESSOR_JOIN(fromJSON, PREPROCESSOR_JOIN(submessageType, _MSGTYPE))(array[index].as<JsonObjectConst>(), configStruct.fieldname[index])) \
-        { \
-            return false; \
-        } \
-        ++configStruct.fieldname ## _count; \
+#define FROM_JSON_REPEATED_MESSAGE(fieldname, submessageType)                          \
+    configStruct.fieldname##_count = 0;                                                \
+    for (size_t index = 0; index < array.size(); ++index) {                            \
+        if (!array[index].is<JsonObjectConst>() ||                                     \
+            !PREPROCESSOR_JOIN(fromJSON, PREPROCESSOR_JOIN(submessageType, _MSGTYPE))( \
+                array[index].as<JsonObjectConst>(), configStruct.fieldname[index])) {  \
+            return false;                                                              \
+        }                                                                              \
+        ++configStruct.fieldname##_count;                                              \
     }
 
-#define FROM_JSON_REPEATED(ltype, fieldname, submessageType) \
-    if (jsonObject.containsKey(#fieldname)) \
-    { \
-        JsonVariantConst value = jsonObject[#fieldname]; \
-        if (!value.is<JsonArrayConst>()) \
-        { \
-            return false; \
-        } \
-        JsonArrayConst array = value.as<JsonArrayConst>(); \
-        if (array.size() > sizeof(configStruct.fieldname) / sizeof(configStruct.fieldname[0])) \
-        { \
-            return false; \
-        } \
-        PREPROCESSOR_JOIN(FROM_JSON_REPEATED_, ltype)(fieldname, submessageType) \
+#define FROM_JSON_REPEATED(ltype, fieldname, submessageType)                                     \
+    if (jsonObject.containsKey(#fieldname)) {                                                    \
+        JsonVariantConst value = jsonObject[#fieldname];                                         \
+        if (!value.is<JsonArrayConst>()) {                                                       \
+            return false;                                                                        \
+        }                                                                                        \
+        JsonArrayConst array = value.as<JsonArrayConst>();                                       \
+        if (array.size() > sizeof(configStruct.fieldname) / sizeof(configStruct.fieldname[0])) { \
+            return false;                                                                        \
+        }                                                                                        \
+        PREPROCESSOR_JOIN(FROM_JSON_REPEATED_, ltype)(fieldname, submessageType)                 \
     }
 
-#define FROM_JSON_REQUIRED(ltype, fieldname, submessageType) PREPROCESSOR_JOIN(FROM_JSON_, ltype)(fieldname, submessageType)
-#define FROM_JSON_OPTIONAL(ltype, fieldname, submessageType) PREPROCESSOR_JOIN(FROM_JSON_, ltype)(fieldname, submessageType)
+#define FROM_JSON_REQUIRED(ltype, fieldname, submessageType)        \
+    PREPROCESSOR_JOIN(FROM_JSON_, ltype)(fieldname, submessageType)
+#define FROM_JSON_OPTIONAL(ltype, fieldname, submessageType)        \
+    PREPROCESSOR_JOIN(FROM_JSON_, ltype)(fieldname, submessageType)
 #define FROM_JSON_SINGULAR(ltype, fieldname, submessageType) static_assert(false, "not supported");
 #define FROM_JSON_FIXARRAY(ltype, fieldname, submessageType) static_assert(false, "not supported");
-#define FROM_JSON_ONEOF(ltype, fieldname, submessageType) static_assert(false, "not supported");
+#define FROM_JSON_ONEOF(ltype, fieldname, submessageType)    static_assert(false, "not supported");
 
-#define FROM_JSON_STATIC(htype, ltype, fieldname, submessageType) PREPROCESSOR_JOIN(FROM_JSON_, htype)(ltype, fieldname, submessageType)
-#define FROM_JSON_POINTER(htype, ltype, fieldname, submessageType) static_assert(false, "not supported");
+#define FROM_JSON_STATIC(htype, ltype, fieldname, submessageType)          \
+    PREPROCESSOR_JOIN(FROM_JSON_, htype)(ltype, fieldname, submessageType)
+#define FROM_JSON_POINTER(htype, ltype, fieldname, submessageType)  static_assert(false, "not supported");
 #define FROM_JSON_CALLBACK(htype, ltype, fieldname, submessageType) static_assert(false, "not supported");
 
-#define FROM_JSON_FIELD(parenttype, atype, htype, ltype, fieldname, tag, disallow_export) \
-    PREPROCESSOR_JOIN(FROM_JSON_, atype)(htype, ltype, fieldname, parenttype ## _ ## fieldname)
+#define FROM_JSON_FIELD(parenttype, atype, htype, ltype, fieldname, tag, disallow_export)   \
+    PREPROCESSOR_JOIN(FROM_JSON_, atype)(htype, ltype, fieldname, parenttype##_##fieldname)
 
-#define GEN_FROM_JSON_FUNCTION_DECL(structtype) static bool fromJSON ## structtype(JsonObjectConst jsonObject, structtype& configStruct);
+#define GEN_FROM_JSON_FUNCTION_DECL(structtype)                                             \
+    static bool fromJSON##structtype(JsonObjectConst jsonObject, structtype &configStruct);
 
-#define GEN_FROM_JSON_FUNCTION(structtype) \
-    static bool fromJSON ## structtype(JsonObjectConst jsonObject, structtype& configStruct) \
-    { \
-        structtype ## _FIELDLIST(FROM_JSON_FIELD, structtype) \
-        return true; \
+#define GEN_FROM_JSON_FUNCTION(structtype)                                                   \
+    static bool fromJSON##structtype(JsonObjectConst jsonObject, structtype &configStruct) { \
+        structtype##_FIELDLIST(FROM_JSON_FIELD, structtype) return true;                     \
     }
 
 #if defined(CONFIG_MESSAGES_GP2040)
-    CONFIG_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION_DECL)
-    CONFIG_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION)
+CONFIG_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION_DECL)
+CONFIG_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION)
 #endif
 #if defined(ENUM_MESSAGES_GP2040)
-    ENUM_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION_DECL)
-    ENUM_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION)
+ENUM_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION_DECL)
+ENUM_MESSAGES_GP2040(GEN_FROM_JSON_FUNCTION)
 #endif
 
 // Missing properties are ignored and initialized with default values
 // Type mismatches, buffer overruns or illegal enum values cause an error
-bool ConfigUtils::fromJSON(Config& config, const char* data, size_t dataLen)
-{
+bool ConfigUtils::fromJSON(Config &config, const char* data, size_t dataLen) {
     DynamicJsonDocument doc(1024 * 10);
-    if (deserializeJson(doc, data, dataLen) != DeserializationError::Ok || !doc.is<JsonObject>())
-    {
+    if (deserializeJson(doc, data, dataLen) != DeserializationError::Ok || !doc.is<JsonObject>()) {
         return false;
     }
 
     // Store config struct on the heap to avoid stack overflow
-    if (!fromJSONConfig(doc.as<JsonObjectConst>(), config))
-    {
+    if (!fromJSONConfig(doc.as<JsonObjectConst>(), config)) {
         return false;
     }
 
