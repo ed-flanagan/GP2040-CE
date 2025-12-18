@@ -176,13 +176,13 @@ LayoutManager::LayoutList LayoutManager::getRightLayout(uint16_t index) {
 
 LayoutManager::LayoutList LayoutManager::drawButtonLayoutLeft() {
     ButtonLayoutParamsLeft leftOptionss =
-        Storage::getInstance().getDisplayOptions()->buttonLayoutCustomOptions.paramsLeft;
+        Storage::getInstance().getDisplayOptions().buttonLayoutCustomOptions.paramsLeft;
     return adjustByCustomSettings(getLeftLayout(leftOptions.layout), leftOptions.common);
 }
 
 LayoutManager::LayoutList LayoutManager::drawButtonLayoutRight() {
     ButtonLayoutParamsRight rightOptions =
-        Storage::getInstance().getDisplayOptions->buttonLayoutCustomOptions.paramsRight;
+        Storage::getInstance().getDisplayOptions().buttonLayoutCustomOptions.paramsRight;
     return adjustByCustomSettings(getRightLayout(rightOptions.layout), rightOptions.common, 64);
 }
 
