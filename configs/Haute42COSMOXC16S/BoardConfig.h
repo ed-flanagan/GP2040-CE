@@ -45,7 +45,7 @@
 #define GPIO_PIN_01 GpioAction::ASSIGNED_TO_ADDON
 #define GPIO_PIN_23 GpioAction::ASSIGNED_TO_ADDON
 #define GPIO_PIN_24 GpioAction::ASSIGNED_TO_ADDON
-#define GPIO_PIN_28 GpioAction::ASSIGNED_TO_ADDON
+#define GPIO_PIN_28 GpioAction::ASSIGNED_TO_ADDON // LED Data Pin
 
 // Turbo
 //
@@ -128,7 +128,7 @@
 // clang-format off
 #define DEFAULT_BOARD_LAYOUT_A                                                \
 {                                                                             \
-    {GP_ELEMENT_PIN_BUTTON, {20, 32, 20, 22, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
+    {GP_ELEMENT_PIN_BUTTON, {20, 32, 20, 28, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
     {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE}},    \
     {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE}},    \
     {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE}},    \
