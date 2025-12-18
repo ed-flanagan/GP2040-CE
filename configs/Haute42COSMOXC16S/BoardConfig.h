@@ -129,11 +129,11 @@
 #define DEFAULT_BOARD_LAYOUT_A                                                \
 {                                                                             \
     {GP_ELEMENT_PIN_BUTTON, {20, 32, 20, 28, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
-    {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE}},    \
-    {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE}},    \
-    {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_PIN_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_PIN_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE}},    \
+    {GP_ELEMENT_PIN_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE}},    \
     {GP_ELEMENT_PIN_BUTTON, {48, 44, 4,  4,  1, 1, 13, GP_SHAPE_ELLIPSE}},    \
-    {GP_ELEMENT_DIR_BUTTON, {55, 53, 56, 47, 1, 1, 2,  GP_SHAPE_PILL, 135}},  \
+    {GP_ELEMENT_PIN_BUTTON, {55, 53, 56, 47, 1, 1, 2,  GP_SHAPE_PILL, 135}},  \
 }
 
 #define DEFAULT_BOARD_LAYOUT_B                                                \
@@ -145,7 +145,7 @@
     {GP_ELEMENT_PIN_BUTTON, {74,  35, 4,   4,  1, 1, 6,  GP_SHAPE_ELLIPSE}},  \
     {GP_ELEMENT_PIN_BUTTON, {83,  30, 4,   4,  1, 1, 7,  GP_SHAPE_ELLIPSE}},  \
     {GP_ELEMENT_PIN_BUTTON, {94,  30, 4,   4,  1, 1, 8,  GP_SHAPE_ELLIPSE}},  \
-    {GP_ELEMENT_PIN_BUTTON, {106, 32, 106, 22, 1, 1, 19, GP_SHAPE_PILL, 68}}, \
+    {GP_ELEMENT_PIN_BUTTON, {106, 34, 106, 22, 1, 1, 19, GP_SHAPE_PILL, 68}}, \
     {GP_ELEMENT_PIN_BUTTON, {71,  53, 71,  47, 1, 1, 27, GP_SHAPE_PILL, 45}}, \
     {GP_ELEMENT_PIN_BUTTON, {79,  44, 4,   4,  1, 1, 9,  GP_SHAPE_ELLIPSE}},  \
 }
