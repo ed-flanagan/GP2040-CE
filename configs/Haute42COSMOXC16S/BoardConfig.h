@@ -53,6 +53,14 @@
 
 #define GPIO_PIN_14 GpioAction::BUTTON_PRESS_TURBO
 
+// No such pin
+// By default, every pin (00-29) is NONE, this just makes it explicit
+//
+#define GPIO_PIN_15 GpioAction::NONE
+#define GPIO_PIN_22 GpioAction::NONE
+#define GPIO_PIN_25 GpioAction::NONE
+#define GPIO_PIN_29 GpioAction::NONE
+
 /*//////////////////////
  // Keyboard Mapping //
 /////////////////// */
@@ -105,8 +113,8 @@
  // Button Layout //
 //////////////// */
 
-#define BUTTON_LAYOUT       BUTTON_LAYOUT_BOARD_DEFINED_A
-#define BUTTON_LAYOUT_RIGHT BUTTON_LAYOUT_BOARD_DEFINED_B
+#define BUTTON_LAYOUT       BUTTON_LAYOUT_STICKLESS_16_SPLIT_A
+#define BUTTON_LAYOUT_RIGHT BUTTON_LAYOUT_STICKLESS_16_SPLIT_A
 
 /*
  * List of GPButtonLayouts:

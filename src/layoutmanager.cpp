@@ -82,10 +82,10 @@ LayoutManager::LayoutList LayoutManager::getLeftLayout(uint16_t index) {
         case BUTTON_LAYOUT_CUSTOMA              : return drawButtonLayoutLeft();
         case BUTTON_LAYOUT_OPENCORE0WASDA       : return drawOpenCore0WASDA();
         case BUTTON_LAYOUT_STICKLESS_13         : return drawStickless13A();
-        case BUTTON_LAYOUT_STICKLESS_16         : return drawStickless16A();
         case BUTTON_LAYOUT_STICKLESS_14         : return drawStickless14A();
-        case BUTTON_LAYOUT_STICKLESS_R16        : return drawSticklessR16A();
+        case BUTTON_LAYOUT_STICKLESS_16         : return drawStickless16A();
         case BUTTON_LAYOUT_STICKLESS_16_SPLIT   : return drawStickless16SplitA();
+        case BUTTON_LAYOUT_STICKLESS_R16        : return drawSticklessR16A();
         case BUTTON_LAYOUT_DANCEPAD_DDR_LEFT    : return drawDancepadDDRLeft();
         case BUTTON_LAYOUT_DANCEPAD_DDR_SOLO    : return drawDancepadDDRSolo();
         case BUTTON_LAYOUT_DANCEPAD_PIU_LEFT    : return drawDancepadPIULeft();
@@ -141,9 +141,10 @@ LayoutManager::LayoutList LayoutManager::getRightLayout(uint16_t index) {
         case BUTTON_LAYOUT_KEYBOARD8B               : return this->drawMAME8B();
         case BUTTON_LAYOUT_OPENCORE0WASDB           : return this->drawOpenCore0WASDB();
         case BUTTON_LAYOUT_STICKLESS_13B            : return this->drawSticklessButtons13B();
-        case BUTTON_LAYOUT_STICKLESS_16B            : return this->drawSticklessButtons16B();
-        case BUTTON_LAYOUT_STICKLESS_R16B           : return this->drawSticklessButtonsR16B();
         case BUTTON_LAYOUT_STICKLESS_14B            : return this->drawSticklessButtons14B();
+        case BUTTON_LAYOUT_STICKLESS_16B            : return this->drawSticklessButtons16B();
+        case BUTTON_LAYOUT_STICKLESS_16_SPLIT_B     : return this->drawStickless16SplitB();
+        case BUTTON_LAYOUT_STICKLESS_R16B           : return this->drawSticklessButtonsR16B();
         case BUTTON_LAYOUT_DANCEPADB                : return this->drawDancepadB();
         case BUTTON_LAYOUT_DANCEPAD_DDR_RIGHT       : return this->drawDancepadDDRRight();
         case BUTTON_LAYOUT_DANCEPAD_PIU_RIGHT       : return this->drawDancepadPIURight();
