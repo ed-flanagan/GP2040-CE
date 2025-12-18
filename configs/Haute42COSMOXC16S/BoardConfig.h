@@ -120,7 +120,7 @@
 // clang-format off
 #define DEFAULT_BOARD_LAYOUT_A                                                \
 {                                                                             \
-    {GP_ELEMENT_PIN_BUTTON, {21, 33, 21, 24, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
+    {GP_ELEMENT_PIN_BUTTON, {20, 32, 20, 24, 1, 1, 18, GP_SHAPE_PILL, 112}},  \
     {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, 5,  GP_SHAPE_ELLIPSE}},    \
     {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, 3,  GP_SHAPE_ELLIPSE}},    \
     {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, 4,  GP_SHAPE_ELLIPSE}},    \
@@ -137,7 +137,7 @@
     {GP_ELEMENT_PIN_BUTTON, {74,  35, 4,   4,  1, 1, 6,  GP_SHAPE_ELLIPSE}},  \
     {GP_ELEMENT_PIN_BUTTON, {83,  30, 4,   4,  1, 1, 7,  GP_SHAPE_ELLIPSE}},  \
     {GP_ELEMENT_PIN_BUTTON, {94,  30, 4,   4,  1, 1, 8,  GP_SHAPE_ELLIPSE}},  \
-    {GP_ELEMENT_PIN_BUTTON, {104, 33, 104, 24, 1, 1, 19, GP_SHAPE_PILL, 68}}, \
+    {GP_ELEMENT_PIN_BUTTON, {106, 32, 106, 24, 1, 1, 19, GP_SHAPE_PILL, 68}}, \
     {GP_ELEMENT_PIN_BUTTON, {71,  53, 71,  47, 1, 1, 27, GP_SHAPE_PILL, 45}}, \
     {GP_ELEMENT_PIN_BUTTON, {79,  44, 4,   4,  1, 1, 9,  GP_SHAPE_ELLIPSE}},  \
 }
@@ -149,14 +149,15 @@
 
 // Config
 //
-#define BOARD_LED_ENABLED         1
-#define BOARD_LED_TYPE            ON_BOARD_LED_MODE_MODE_INDICATOR
-#define BOARD_LEDS_PIN            28
-#define LED_BRIGHTNESS_MAXIMUM    200
-#define LED_BRIGHTNESS_STEPS      5
+#define BOARD_LED_ENABLED 1
+#define BOARD_LED_TYPE ON_BOARD_LED_MODE_MODE_INDICATOR
+#define BOARD_LEDS_PIN 28
+
 #define LED_FORMAT                LED_FORMAT_GRB
-#define LEDS_BASE_ANIMATION_INDEX 1
+#define LED_BRIGHTNESS_MAXIMUM    200
 #define LEDS_BRIGHTNESS           200
+#define LED_BRIGHTNESS_STEPS      5
+#define LEDS_BASE_ANIMATION_INDEX 1
 #define LEDS_PER_PIXEL            1
 
 // Enum
