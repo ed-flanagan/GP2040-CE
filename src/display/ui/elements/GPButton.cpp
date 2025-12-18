@@ -21,11 +21,11 @@ void GPButton::draw() {
 
     uint16_t width   = getRenderer()->getDriver()->getMetrics()->width;
     uint16_t hscale  = (uint16_t)((double)(this->getViewport().right - this->getViewport().left) * scaleX);
-    uint16_t offsetX = (width - scale) / 2;
+    uint16_t offsetX = (width - hscale) / 2;
 
-    uint16_t height      = getRenderer()->getDriver()->getMetrics()->height;
-    uint16_t vscale      = (uint16_t)((double)(this->getViewport().bottom - this->getViewport().top) * scaleY)
-        uint16_t offsetY = (height - vscale) / 2;
+    uint16_t height  = getRenderer()->getDriver()->getMetrics()->height;
+    uint16_t vscale  = (uint16_t)((double)(this->getViewport().bottom - this->getViewport().top) * scaleY);
+    uint16_t offsetY = (height - vscale) / 2;
 
     if (scaleX > 0.0f) {
         baseX = ((this->x) * scaleX + this->getViewport().left) + offsetX;
