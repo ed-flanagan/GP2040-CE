@@ -162,24 +162,22 @@
 
 // Enum
 //
-#define LEDS_DPAD_UP    0
+#define LEDS_DPAD_LEFT  0
 #define LEDS_DPAD_DOWN  1
 #define LEDS_DPAD_RIGHT 2
-#define LEDS_DPAD_LEFT  3
-#define LEDS_BUTTON_B1  4
-#define LEDS_BUTTON_B2  5
-#define LEDS_BUTTON_R2  6
-#define LEDS_BUTTON_L2  7
-#define LEDS_BUTTON_B3  8
-#define LEDS_BUTTON_B4  9
-#define LEDS_BUTTON_R1  10
-#define LEDS_BUTTON_L1  11
-#define LEDS_BUTTON_L3  12
-#define LEDS_BUTTON_R3  13
-#define LEDS_BUTTON_A1  14
+#define LEDS_DPAD_UP    3
+#define LEDS_BUTTON_B3  4
+#define LEDS_BUTTON_B4  5
+#define LEDS_BUTTON_R1  6
+#define LEDS_BUTTON_L1  7
+#define LEDS_BUTTON_B1  8
+#define LEDS_BUTTON_B2  9
+#define LEDS_BUTTON_R2  10
+#define LEDS_BUTTON_L2  11
+#define LEDS_BUTTON_A1  12
+#define LEDS_BUTTON_L3  13
+#define LEDS_BUTTON_R3  14
 #define LEDS_BUTTON_A2  15
-#define LEDS_BUTTON_26  16
-#define LEDS_BUTTON_27  17
 
 // Ambient lighting
 //
