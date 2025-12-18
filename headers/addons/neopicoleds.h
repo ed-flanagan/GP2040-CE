@@ -1,26 +1,26 @@
 /*
-* SPDX-License-Identifier: MIT
-* SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
-*/
+ * SPDX-License-Identifier: MIT
+ * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
+ */
 
 #ifndef _NEOPICOLEDS_H_
 #define _NEOPICOLEDS_H_
 
 // Pico Includes
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // GP2040 Includes
-#include "helper.h"
 #include "gamepad.h"
 #include "gpaddon.h"
+#include "helper.h"
 #include "storagemanager.h"
 
 // MPGS
 #include "BoardConfig.h"
-#include "animationstation.h"
 #include "NeoPico.h"
+#include "animationstation.h"
 
 #include "enums.pb.h"
 
@@ -45,7 +45,7 @@
 #endif
 
 #ifndef LEDS_BASE_ANIMATION_INDEX
-#define LEDS_BASE_ANIMATION_INDEX 2//1
+#define LEDS_BASE_ANIMATION_INDEX 2 // 1
 #endif
 
 #ifndef LEDS_STATIC_COLOR_INDEX
@@ -81,11 +81,11 @@
 #endif
 
 #ifndef LEDS_DPAD_LEFT
-#define LEDS_DPAD_LEFT  -1
+#define LEDS_DPAD_LEFT -1
 #endif
 
 #ifndef LEDS_DPAD_DOWN
-#define LEDS_DPAD_DOWN  -1
+#define LEDS_DPAD_DOWN -1
 #endif
 
 #ifndef LEDS_DPAD_RIGHT
@@ -93,63 +93,63 @@
 #endif
 
 #ifndef LEDS_DPAD_UP
-#define LEDS_DPAD_UP    -1
+#define LEDS_DPAD_UP -1
 #endif
 
 #ifndef LEDS_BUTTON_B1
-#define LEDS_BUTTON_B1  -1
+#define LEDS_BUTTON_B1 -1
 #endif
 
 #ifndef LEDS_BUTTON_B2
-#define LEDS_BUTTON_B2  -1
+#define LEDS_BUTTON_B2 -1
 #endif
 
 #ifndef LEDS_BUTTON_B3
-#define LEDS_BUTTON_B3  -1
+#define LEDS_BUTTON_B3 -1
 #endif
 
 #ifndef LEDS_BUTTON_B4
-#define LEDS_BUTTON_B4  -1
+#define LEDS_BUTTON_B4 -1
 #endif
 
 #ifndef LEDS_BUTTON_R1
-#define LEDS_BUTTON_R1  -1
+#define LEDS_BUTTON_R1 -1
 #endif
 
 #ifndef LEDS_BUTTON_L1
-#define LEDS_BUTTON_L1  -1
+#define LEDS_BUTTON_L1 -1
 #endif
 
 #ifndef LEDS_BUTTON_L2
-#define LEDS_BUTTON_L2  -1
+#define LEDS_BUTTON_L2 -1
 #endif
 
 #ifndef LEDS_BUTTON_R2
-#define LEDS_BUTTON_R2  -1
+#define LEDS_BUTTON_R2 -1
 #endif
 
 #ifndef LEDS_BUTTON_S1
-#define LEDS_BUTTON_S1  -1
+#define LEDS_BUTTON_S1 -1
 #endif
 
 #ifndef LEDS_BUTTON_S2
-#define LEDS_BUTTON_S2  -1
+#define LEDS_BUTTON_S2 -1
 #endif
 
 #ifndef LEDS_BUTTON_L3
-#define LEDS_BUTTON_L3  -1
+#define LEDS_BUTTON_L3 -1
 #endif
 
 #ifndef LEDS_BUTTON_R3
-#define LEDS_BUTTON_R3  -1
+#define LEDS_BUTTON_R3 -1
 #endif
 
 #ifndef LEDS_BUTTON_A1
-#define LEDS_BUTTON_A1  -1
+#define LEDS_BUTTON_A1 -1
 #endif
 
 #ifndef LEDS_BUTTON_A2
-#define LEDS_BUTTON_A2  -1
+#define LEDS_BUTTON_A2 -1
 #endif
 
 #ifndef LEDS_TURN_OFF_WHEN_SUSPENDED
@@ -209,38 +209,49 @@
 #endif
 
 // Neo Pixel needs to tie into PlayerLEDS led Levels
-class NeoPicoPlayerLEDs : public PlayerLEDs
-{
-public:
-    virtual void setup(){}
-    virtual void display(){}
-    uint16_t * getLedLevels() { return ledLevels; }
+class NeoPicoPlayerLEDs : public PlayerLEDs {
+  public:
+    virtual void setup() {}
+
+    virtual void display() {}
+
+    uint16_t* getLedLevels() {
+        return ledLevels;
+    }
 };
 
 #define NeoPicoLEDName "NeoPicoLED"
 
 // NeoPico LED Addon
 class NeoPicoLEDAddon : public GPAddon {
-public:
+  public:
     virtual bool available();
     virtual void setup();
+
     virtual void preprocess() {}
+
     virtual void process();
+
     virtual void postprocess(bool sent) {}
+
     virtual void reinit() {}
-    virtual std::string name() { return NeoPicoLEDName; }    
-	void ambientLightLinkage(); 
-    
-private:
-    std::vector<uint8_t> * getLEDPositions(std::string button, std::vector<std::vector<uint8_t>> *positions);
-    std::vector<std::vector<Pixel>> generatedLEDButtons(std::vector<std::vector<uint8_t>> *positions);
-    std::vector<std::vector<Pixel>> generatedLEDStickless(std::vector<std::vector<uint8_t>> *positions);
-    std::vector<std::vector<Pixel>> generatedLEDWasd(std::vector<std::vector<uint8_t>> *positions);
-    std::vector<std::vector<Pixel>> generatedLEDWasdFBM(std::vector<std::vector<uint8_t>> *positions);
+
+    virtual std::string name() {
+        return NeoPicoLEDName;
+    }
+
+    void ambientLightLinkage();
+
+  private:
+    std::vector<uint8_t>* getLEDPositions(std::string button, std::vector<std::vector<uint8_t>>* positions);
+    std::vector<std::vector<Pixel>> generatedLEDButtons(std::vector<std::vector<uint8_t>>* positions);
+    std::vector<std::vector<Pixel>> generatedLEDStickless(std::vector<std::vector<uint8_t>>* positions);
+    std::vector<std::vector<Pixel>> generatedLEDWasd(std::vector<std::vector<uint8_t>>* positions);
+    std::vector<std::vector<Pixel>> generatedLEDWasdFBM(std::vector<std::vector<uint8_t>>* positions);
     std::vector<std::vector<Pixel>> createLEDLayout(ButtonLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount);
     uint8_t setupButtonPositions();
-    GamepadHotkey animationHotkeys(Gamepad *gamepad);
-    void ambientHotkeys(Gamepad *gamepad);
+    GamepadHotkey animationHotkeys(Gamepad* gamepad);
+    void ambientHotkeys(Gamepad* gamepad);
     void ambientLightCustom();
     const uint32_t intervalMS = 10;
     absolute_time_t nextRunTime;
@@ -249,7 +260,7 @@ private:
     PixelMatrix matrix;
     NeoPico neopico;
     PLEDAnimationState animationState; // NeoPico can control the player LEDs
-    NeoPicoPlayerLEDs * neoPLEDs = nullptr;
+    NeoPicoPlayerLEDs* neoPLEDs = nullptr;
     AnimationStation as;
     std::map<std::string, int> buttonPositions;
     PLEDType ledType;
@@ -257,14 +268,14 @@ private:
     uint32_t frame[100];
 
     // Ambient neopico leds
-	float alBrightnessBreathX;
-	uint8_t breathLedEffectCycle;
-	bool alReverse;
-	int alCurrentFrame;
-	int alFrameToRGB;
-	int alFrameSpeed;
+    float alBrightnessBreathX;
+    uint8_t breathLedEffectCycle;
+    bool alReverse;
+    int alCurrentFrame;
+    int alFrameToRGB;
+    int alFrameSpeed;
     RGB ambientLight;
-	absolute_time_t nextRunTimeAmbientLight;
+    absolute_time_t nextRunTimeAmbientLight;
     uint8_t chaseLightIndex;
     uint8_t chaseLightMaxIndexPos;
 
