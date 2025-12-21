@@ -9,6 +9,8 @@ void GPShape::draw() {
     double scaleY = this->getScaleY();
 
     // set scale on X & Y to be proportionate if either is 0
+    // NOTE: `else if` enforces mutual exclusion (i.e. when both x/y = 1.0f, or
+    //       if x is 1.0, then y is set to 1
     if ((scaleX > 0.0f) && ((scaleY == 0.0f) || (scaleY == 1.0f))) {
         scaleY = scaleX;
     } else if ((scaleY > 0.0f) && ((scaleX == 0.0f) || (scaleX == 1.0f))) {
@@ -31,13 +33,13 @@ void GPShape::draw() {
     }
 
     // base
+    uint16_t scaledSize = baseRadius = (uint16_t)((double)this->_sizeX * scaleX);
+
     switch (this->_shape) {
         case GP_SHAPE_ELLIPSE:
-            uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-            uint16_t baseRadius = (uint16_t)scaledSize;
             getRenderer()->drawEllipse(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor);
             break;
-        case GP_SHAPE_SQUARE:
+        case GP_SHAPE_SQUARE: {
             uint16_t sizeX  = (this->_sizeX) * scaleX + vp.left;
             uint16_t sizeY  = (this->_sizeY) * scaleY + vp.top;
             uint16_t width  = this->_sizeX - baseX;
@@ -45,23 +47,19 @@ void GPShape::draw() {
 
             getRenderer()->drawRectangle(baseX, baseY, sizeX + offsetX, sizeY, this->strokeColor, this->fillColor,
                                          this->_angle);
-            break;
+        } break;
         case GP_SHAPE_LINE:
             getRenderer()->drawLine(baseX, baseY, this->_sizeX, this->_sizeY, this->strokeColor, 0);
             break;
         case GP_SHAPE_POLYGON:
-            uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-            uint16_t baseRadius = (uint16_t)scaledSize;
             getRenderer()->drawPolygon(baseX, baseY, baseRadius, this->_sizeY, this->strokeColor, this->fillColor,
                                        this->_angle);
             break;
         break case GP_SHAPE_ARC:
-            uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-            uint16_t baseRadius = (uint16_t)scaledSize;
             getRenderer()->drawArc(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor,
                                    this->_angle, this->_angleEnd, this->_closed);
             break;
-        case GP_SHAPE_PILL:
+        case GP_SHAPE_PILL: {
             uint16_t sizeX  = (this->_sizeX) * scaleX + vp.left;
             uint16_t sizeY  = (this->_sizeY) * scaleY + vp.top;
             uint16_t width  = this->_sizeX - baseX;
@@ -69,6 +67,6 @@ void GPShape::draw() {
 
             getRenderer()->drawPill(baseX, baseY, sizeX + offsetX, sizeY, this->strokeColor, this->fillColor,
                                     this->_angle);
-            break;
+        } break;
     }
 }
