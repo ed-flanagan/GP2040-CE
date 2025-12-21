@@ -275,7 +275,7 @@
 #ifndef KEY_DPAD_RIGHT
 #define KEY_DPAD_RIGHT -1
 #endif
-#ifndef KEY_DPAD_UP
+#define KEY_DPAD_UP
 #define KEY_DPAD_UP -1
 #endif
 
