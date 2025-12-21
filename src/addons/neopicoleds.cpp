@@ -692,8 +692,9 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDButtons(std::vector
     return pixels;
 }
 
-std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDSticklessSplit(vector<vector<uint8_t>>* positions) {
-    return {
+std::vector<std::vector<Pixel>>
+NeoPicoLEDAddon::generatedLEDSticklessSplit(std::vector<std::vector<uint8_t>>* positions) {
+    std::vector<std::vector<Pixel>> pixels = {
         {
             PIXEL(BUTTON_LABEL_L3, GAMEPAD_MASK_L3),
             NO_PIXEL,
@@ -751,6 +752,8 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDSticklessSplit(vect
             PIXEL(BUTTON_LABEL_A2, GAMEPAD_MASK_A2),
         },
     };
+
+    return pixels;
 }
 
 /**
