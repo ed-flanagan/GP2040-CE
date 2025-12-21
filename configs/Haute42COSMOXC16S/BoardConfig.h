@@ -36,10 +36,8 @@
 #define GPIO_PIN_19 GpioAction::BUTTON_PRESS_R3    // R3     | RS     | RS      | R3       | 12     | RS     |
 #define GPIO_PIN_20 GpioAction::BUTTON_PRESS_A1    // A1     | Guide  | Home    | PS       | 13     | ~      |
 #define GPIO_PIN_21 GpioAction::BUTTON_PRESS_A2    // A2     | ~      | Capture | ~        | 14     | ~      |
-// #define GPIO_PIN_26 GpioAction::BUTTON_PRESS_A4    // A4     | ~      | ~       | ~        | ~      | ~      |
-// #define GPIO_PIN_27 GpioAction::BUTTON_PRESS_A3    // A3     | ~      | ~       | ~        | ~      | ~      |
-#define GPIO_PIN_26 GpioAction::BUTTON_PRESS_B1
-#define GPIO_PIN_27 GpioAction::BUTTON_PRESS_L1
+#define GPIO_PIN_26 GpioAction::BUTTON_PRESS_A4    // A4     | ~      | ~       | ~        | ~      | ~      |
+#define GPIO_PIN_27 GpioAction::BUTTON_PRESS_A3    // A3     | ~      | ~       | ~        | ~      | ~      |
 
 // Assigned by add-on config
 //
