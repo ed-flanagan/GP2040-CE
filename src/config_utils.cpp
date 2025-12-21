@@ -266,6 +266,65 @@
 #define GPIO_PIN_29 GpioAction::NONE
 #endif
 
+#ifndef KEY_DPAD_DOWN
+#define KEY_DPAD_DOWN -1
+#endif
+#ifndef KEY_DPAD_LEFT
+#define KEY_DPAD_LEFT -1
+#endif
+#ifndef KEY_DPAD_RIGHT
+#define KEY_DPAD_RIGHT -1
+#endif
+#define KEY_DPAD_UP -1
+#endif
+
+#ifndef KEY_BUTTON_A1
+#define KEY_BUTTON_A1 -1
+#endif
+#ifndef KEY_BUTTON_A2
+#define KEY_BUTTON_A2 -1
+#endif
+#ifndef KEY_BUTTON_B1
+#define KEY_BUTTON_B1 -1
+#endif
+#ifndef KEY_BUTTON_B2
+#define KEY_BUTTON_B2 -1
+#endif
+#ifndef KEY_BUTTON_B3
+#define KEY_BUTTON_B3 -1
+#endif
+#ifndef KEY_BUTTON_B4
+#define KEY_BUTTON_B4 -1
+#endif
+#ifndef KEY_BUTTON_L1
+#define KEY_BUTTON_L1 -1
+#endif
+#ifndef KEY_BUTTON_L2
+#define KEY_BUTTON_L2 -1
+#endif
+#ifndef KEY_BUTTON_L3
+#define KEY_BUTTON_L3 -1
+#endif
+#ifndef KEY_BUTTON_R1
+#define KEY_BUTTON_R1 -1
+#endif
+#ifndef KEY_BUTTON_R2
+#define KEY_BUTTON_R2 -1
+#endif
+#ifndef KEY_BUTTON_R3
+#define KEY_BUTTON_R3 -1
+#endif
+#ifndef KEY_BUTTON_S1
+#define KEY_BUTTON_S1 -1
+#endif
+#ifndef KEY_BUTTON_S2
+#define KEY_BUTTON_S2 -1
+#endif
+
+#ifndef KEY_BUTTON_FN
+#define KEY_BUTTON_FN -1
+#endif
+
 #define MAX_PROFILES (uint8_t)6
 
 // -----------------------------------------------------
