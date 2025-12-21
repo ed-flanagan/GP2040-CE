@@ -54,6 +54,8 @@ const std::string BUTTON_LABEL_L3    = "L3";
 const std::string BUTTON_LABEL_R3    = "R3";
 const std::string BUTTON_LABEL_A1    = "A1";
 const std::string BUTTON_LABEL_A2    = "A2";
+const std::string BUTTON_LABEL_A3    = "A3";
+const std::string BUTTON_LABEL_A4    = "A4";
 
 static std::vector<uint8_t> EMPTY_VECTOR;
 
@@ -690,6 +692,67 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDButtons(std::vector
     return pixels;
 }
 
+std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDSticklessSplit(vector<vector<uint8_t>>* positions) {
+    return {
+        {
+            PIXEL(BUTTON_LABEL_L3, GAMEPAD_MASK_L3),
+            NO_PIXEL,
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_LEFT, GAMEPAD_MASK_DL),
+            NO_PIXEL,
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_DOWN, GAMEPAD_MASK_DD),
+            NO_PIXEL,
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_RIGHT, GAMEPAD_MASK_DR),
+            NO_PIXEL,
+            PIXEL(BUTTON_LABEL_L1, GAMEPAD_MASK_L1),
+        },
+        {
+            PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
+            NO_PIXEL,
+            PIXEL(BUTTON_LABEL_UP, GAMEPAD_MASK_DU),
+        },
+        {
+            PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
+            NO_PIXEL,
+            PIXEL(BUTTON_LABEL_A3, GAMEPAD_MASK_A3),
+        },
+        {
+            PIXEL(BUTTON_LABEL_B3, GAMEPAD_MASK_B3),
+            PIXEL(BUTTON_LABEL_B1, GAMEPAD_MASK_B1),
+            PIXEL(BUTTON_LABEL_L2, GAMEPAD_MASK_L2),
+        },
+        {
+            PIXEL(BUTTON_LABEL_B4, GAMEPAD_MASK_B4),
+            PIXEL(BUTTON_LABEL_B2, GAMEPAD_MASK_B2),
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_R1, GAMEPAD_MASK_R1),
+            PIXEL(BUTTON_LABEL_R2, GAMEPAD_MASK_R2),
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_R3, GAMEPAD_MASK_R3),
+            NO_PIXEL,
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_S1, GAMEPAD_MASK_S1),
+            PIXEL(BUTTON_LABEL_S2, GAMEPAD_MASK_S2),
+            PIXEL(BUTTON_LABEL_A1, GAMEPAD_MASK_A1),
+            PIXEL(BUTTON_LABEL_A2, GAMEPAD_MASK_A2),
+        },
+    };
+}
+
 /**
  * @brief Create an LED layout using a 3x8 matrix.
  */
@@ -857,8 +920,9 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::createLEDLayout(ButtonLayout la
         case BUTTON_LAYOUT_STICKLESS_13:
         case BUTTON_LAYOUT_STICKLESS_14:
         case BUTTON_LAYOUT_STICKLESS_16:
-        case BUTTON_LAYOUT_STICKLESS_16_SPLIT:
-        case BUTTON_LAYOUT_STICKLESS_R16     : return generatedLEDStickless(&positions);
+        case BUTTON_LAYOUT_STICKLESS_R16  : return generatedLEDStickless(&positions);
+
+        case BUTTON_LAYOUT_STICKLESS_16_SPLIT: return generatedLEDSticklessSplit(&positions);
 
         case BUTTON_LAYOUT_FIGHTBOARD_MIRRORED: return generatedLEDWasdFBM(&positions);
 
@@ -882,6 +946,7 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::createLEDLayout(ButtonLayout la
 
 uint8_t NeoPicoLEDAddon::setupButtonPositions() {
     const LEDOptions &ledOptions = Storage::getInstance().getLedOptions();
+
     buttonPositions.clear();
     buttonPositions.emplace(BUTTON_LABEL_UP, ledOptions.indexUp);
     buttonPositions.emplace(BUTTON_LABEL_DOWN, ledOptions.indexDown);
@@ -901,6 +966,7 @@ uint8_t NeoPicoLEDAddon::setupButtonPositions() {
     buttonPositions.emplace(BUTTON_LABEL_R3, ledOptions.indexR3);
     buttonPositions.emplace(BUTTON_LABEL_A1, ledOptions.indexA1);
     buttonPositions.emplace(BUTTON_LABEL_A2, ledOptions.indexA2);
+
     uint8_t buttonCount = 0;
     for (auto const &buttonPosition : buttonPositions) {
         if (buttonPosition.second > -1) {
