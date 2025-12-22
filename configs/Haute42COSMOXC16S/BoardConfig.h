@@ -35,13 +35,14 @@
 #define GPIO_PIN_19 GpioAction::BUTTON_PRESS_R3    // R3     | RS     | RS      | R3       | 12     | RS     |
 #define GPIO_PIN_26 GpioAction::BUTTON_PRESS_A4    // A4     | ~      | ~       | tpad_dwn | ~      | ~      |
 #define GPIO_PIN_27 GpioAction::BUTTON_PRESS_A3    // A3     | ~      | ~       | tpad_up  | ~      | ~      |
-// #define GPIO_PIN_26 GpioAction::BUTTON_PRESS_UP    // A4     | ~      | ~       | tpad_dwn | ~      | ~      |
-// #define GPIO_PIN_27 GpioAction::BUTTON_PRESS_L1    // A3     | ~      | ~       | tpad_up  | ~      | ~      |
 //      Top row                                    // -------------------------------------------------------|
 #define GPIO_PIN_16 GpioAction::BUTTON_PRESS_S1    // S1     | Back   | Minus   | Select   | 9      | Coin   |
 #define GPIO_PIN_17 GpioAction::BUTTON_PRESS_S2    // S2     | Start  | Plus    | Start    | 10     | Start  |
 #define GPIO_PIN_20 GpioAction::BUTTON_PRESS_A1    // A1     | Guide  | Home    | PS       | 13     | ~      |
 #define GPIO_PIN_21 GpioAction::BUTTON_PRESS_A2    // A2     | ~      | Capture | ~        | 14     | ~      |
+
+// #define GPIO_PIN_26 GpioAction::BUTTON_PRESS_UP    // A4     | ~      | ~       | tpad_dwn | ~      | ~      |
+// #define GPIO_PIN_27 GpioAction::BUTTON_PRESS_L1    // A3     | ~      | ~       | tpad_up  | ~      | ~      |
 
 // Assigned by add-on config
 //
@@ -99,7 +100,7 @@
  // Input Modes //
 ////////////// */
 
-#define DEFAULT_INPUT_MODE INPUT_MODE_XINPUT
+#define DEFAULT_INPUT_MODE    INPUT_MODE_XINPUT
 #define DEFAULT_INPUT_MODE_R1 INPUT_MODE_XBONE
 #define DEFAULT_INPUT_MODE_B4 INPUT_MODE_PS5
 
@@ -164,16 +165,15 @@
 // Config
 //
 #define BOARD_LED_ENABLED 1
-#define BOARD_LED_TYPE ON_BOARD_LED_MODE_MODE_INDICATOR
-#define BOARD_LEDS_PIN 28
+#define BOARD_LED_TYPE    ON_BOARD_LED_MODE_MODE_INDICATOR
+#define BOARD_LEDS_PIN    28
 
 #define LED_FORMAT                LED_FORMAT_GRB
 #define LED_BRIGHTNESS_MAXIMUM    200
 #define LEDS_BRIGHTNESS           200
 #define LED_BRIGHTNESS_STEPS      5
 #define LEDS_BASE_ANIMATION_INDEX 1
-// #define LEDS_PER_PIXEL            1
-#define LEDS_PER_PIXEL            2
+#define LEDS_PER_PIXEL            1
 
 // Enum
 //
