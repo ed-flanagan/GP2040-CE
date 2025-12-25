@@ -695,11 +695,11 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDButtons(std::vector
 std::vector<std::vector<Pixel>>
 NeoPicoLEDAddon::generatedLEDSticklessSplit(std::vector<std::vector<uint8_t>>* positions) {
     std::vector<std::vector<Pixel>> pixels = {
-        {
-            PIXEL(BUTTON_LABEL_L3, GAMEPAD_MASK_L3),
-            NO_PIXEL,
-            NO_PIXEL,
-        },
+        // {
+        //     PIXEL(BUTTON_LABEL_L3, GAMEPAD_MASK_L3),
+        //     NO_PIXEL,
+        //     NO_PIXEL,
+        // },
         {
             PIXEL(BUTTON_LABEL_LEFT, GAMEPAD_MASK_DL),
             NO_PIXEL,
@@ -713,22 +713,30 @@ NeoPicoLEDAddon::generatedLEDSticklessSplit(std::vector<std::vector<uint8_t>>* p
         {
             PIXEL(BUTTON_LABEL_RIGHT, GAMEPAD_MASK_DR),
             NO_PIXEL,
-            PIXEL(BUTTON_LABEL_L1, GAMEPAD_MASK_L1),
+            NO_PIXEL,
+            // PIXEL(BUTTON_LABEL_L1, GAMEPAD_MASK_L1),
         },
         {
-            PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
-            NO_PIXEL,
             PIXEL(BUTTON_LABEL_UP, GAMEPAD_MASK_DU),
+            NO_PIXEL,
+            NO_PIXEL,
         },
         {
             PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
             NO_PIXEL,
-            PIXEL(BUTTON_LABEL_A3, GAMEPAD_MASK_A3),
+            NO_PIXEL,
+            // PIXEL(BUTTON_LABEL_UP, GAMEPAD_MASK_DU),
         },
+        // {
+        //     PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
+        //     NO_PIXEL,
+        //     PIXEL(BUTTON_LABEL_A3, GAMEPAD_MASK_A3),
+        // },
         {
             PIXEL(BUTTON_LABEL_B3, GAMEPAD_MASK_B3),
             PIXEL(BUTTON_LABEL_B1, GAMEPAD_MASK_B1),
-            PIXEL(BUTTON_LABEL_L2, GAMEPAD_MASK_L2),
+            NO_PIXEL,
+            // PIXEL(BUTTON_LABEL_L2, GAMEPAD_MASK_L2),
         },
         {
             PIXEL(BUTTON_LABEL_B4, GAMEPAD_MASK_B4),
@@ -741,8 +749,18 @@ NeoPicoLEDAddon::generatedLEDSticklessSplit(std::vector<std::vector<uint8_t>>* p
             NO_PIXEL,
         },
         {
-            PIXEL(BUTTON_LABEL_R3, GAMEPAD_MASK_R3),
+            PIXEL(BUTTON_LABEL_L1, GAMEPAD_MASK_L1),
+            PIXEL(BUTTON_LABEL_L2, GAMEPAD_MASK_L2),
             NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_R3, GAMEPAD_MASK_R3),
+            PIXEL(BUTTON_LABEL_L3, GAMEPAD_MASK_L3),
+            NO_PIXEL,
+        },
+        {
+            PIXEL(BUTTON_LABEL_A3, GAMEPAD_MASK_A3),
+            PIXEL(BUTTON_LABEL_A4, GAMEPAD_MASK_A4),
             NO_PIXEL,
         },
         {
