@@ -274,6 +274,10 @@
     {GP_ELEMENT_BTN_BUTTON, {98, 41, 6, 6, 1, 1, GAMEPAD_MASK_L2,     GP_SHAPE_ELLIPSE}}\
 }
 
+  //////////////////
+ // Stickless 16 //
+//////////////////
+
 #define BUTTON_GROUP_STICKLESS16A {\
     {GP_ELEMENT_DIR_BUTTON, {47, 19,  4,  4, 1, 1, GAMEPAD_MASK_UP,    GP_SHAPE_ELLIPSE}},\
     {GP_ELEMENT_DIR_BUTTON, {32, 27,  4,  4, 1, 1, GAMEPAD_MASK_LEFT,  GP_SHAPE_ELLIPSE}},\
@@ -299,6 +303,38 @@
     {GP_ELEMENT_BTN_BUTTON, {79, 35, 4, 4, 1, 1, GAMEPAD_MASK_R2,     GP_SHAPE_ELLIPSE}},\
     {GP_ELEMENT_BTN_BUTTON, {89, 37, 4, 4, 1, 1, GAMEPAD_MASK_L2,     GP_SHAPE_ELLIPSE}}\
 }
+
+/*////////////////////////
+ // Stickless 16 Split //
+///////////////////// */
+
+#define BUTTON_GROUP_STICKLESS_16_SPLIT_A                                                          \
+{                                                                                                  \
+    {GP_ELEMENT_BTN_BUTTON, {20, 32, 20, 28, 1, 1, GAMEPAD_MASK_L3,    GP_SHAPE_PILL, 112}},       \
+    {GP_ELEMENT_DIR_BUTTON, {32, 23, 4,  4,  1, 1, GAMEPAD_MASK_LEFT,  GP_SHAPE_ELLIPSE}},         \
+    {GP_ELEMENT_DIR_BUTTON, {43, 23, 4,  4,  1, 1, GAMEPAD_MASK_DOWN,  GP_SHAPE_ELLIPSE}},         \
+    {GP_ELEMENT_DIR_BUTTON, {52, 28, 4,  4,  1, 1, GAMEPAD_MASK_RIGHT, GP_SHAPE_ELLIPSE}},         \
+    {GP_ELEMENT_BTN_BUTTON, {48, 44, 4,  4,  1, 1, GAMEPAD_MASK_L1,    GP_SHAPE_ELLIPSE}},         \
+    {GP_ELEMENT_DIR_BUTTON, {55, 53, 56, 47, 1, 1, GAMEPAD_MASK_UP,    GP_SHAPE_PILL, 135}},       \
+}
+
+#define BUTTON_GROUP_STICKLESS_16_SPLIT_B                                                          \
+{                                                                                                  \
+    {GP_ELEMENT_BTN_BUTTON, {63,  31, 5,   5,  1, 1, GAMEPAD_MASK_A4, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {74,  25, 4,   4,  1, 1, GAMEPAD_MASK_B3, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {83,  20, 4,   4,  1, 1, GAMEPAD_MASK_B4, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {94,  20, 4,   4,  1, 1, GAMEPAD_MASK_R1, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {74,  35, 4,   4,  1, 1, GAMEPAD_MASK_B1, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {83,  30, 4,   4,  1, 1, GAMEPAD_MASK_B2, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {94,  30, 4,   4,  1, 1, GAMEPAD_MASK_R2, GP_SHAPE_ELLIPSE}},          \
+    {GP_ELEMENT_BTN_BUTTON, {106, 36, 106, 20, 1, 1, GAMEPAD_MASK_R3, GP_SHAPE_PILL, 68}},         \
+    {GP_ELEMENT_BTN_BUTTON, {71,  53, 71,  47, 1, 1, GAMEPAD_MASK_A3, GP_SHAPE_PILL, 45}},         \
+    {GP_ELEMENT_BTN_BUTTON, {79,  44, 4,   4,  1, 1, GAMEPAD_MASK_L2, GP_SHAPE_ELLIPSE}},          \
+}
+
+  ///////////////////
+ // Stickless R16 //
+///////////////////
 
 #define BUTTON_GROUP_STICKLESSR16A {\
     {GP_ELEMENT_DIR_BUTTON, {47, 19,  4,  4, 1, 1, GAMEPAD_MASK_UP,    GP_SHAPE_ELLIPSE}},\

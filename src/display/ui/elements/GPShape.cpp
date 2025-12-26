@@ -9,54 +9,58 @@ void GPShape::draw() {
     double scaleY = this->getScaleY();
 
     // set scale on X & Y to be proportionate if either is 0
-    if ((scaleX > 0.0f) & ((scaleY == 0.0f) || (scaleY == 1.0f))) {
+    // NOTE: `else if` enforces mutual exclusion (i.e. when both x/y = 1.0f, or
+    //       if x is 1.0, then y is set to 1
+    if ((scaleX > 0.0f) && ((scaleY == 0.0f) || (scaleY == 1.0f))) {
         scaleY = scaleX;
-    } else if (((scaleX == 0.0f) || (scaleX == 1.0f)) & (scaleY > 0.0f)) {
+    } else if ((scaleY > 0.0f) && ((scaleX == 0.0f) || (scaleX == 1.0f))) {
         scaleX = scaleY;
     }
 
-    uint16_t offsetX = ((getRenderer()->getDriver()->getMetrics()->width - (uint16_t)((double)(this->getViewport().right - this->getViewport().left) * scaleX)) / 2);
-    uint16_t offsetY = ((getRenderer()->getDriver()->getMetrics()->height - (uint16_t)((double)(this->getViewport().bottom - this->getViewport().top) * scaleY)) / 2);
+    GPGFX_DisplayMetrics* m = getRenderer()->getDriver()->getMetrics();
+    GPViewport vp           = this->getViewport();
+
+    uint16_t offsetX = (m->width - ((vp.right - vp.left) * scaleX)) / 2;
+    uint16_t offsetY = (m->height - ((vp.bottom - vp.top) * scaleY)) / 2;
 
     if (scaleX > 0.0f) {
-        baseX = ((this->x) * scaleX + this->getViewport().left) + offsetX;
+        baseX = baseX * scaleX + vp.left + offsetX;
     }
 
+    // NOTE: scaled Y does not include offsetY
     if (scaleY > 0.0f) {
-        baseY = (this->y) * scaleY + this->getViewport().top;
+        baseY = baseY * scaleY + vp.top;
     }
+
+    uint16_t scaledSize, baseRadius;
+    scaledSize = baseRadius = (uint16_t)((double)this->_sizeX * scaleX);
+
+    // NOTE: scaled Y does not include offsetY
+    uint16_t scaledX = (this->_sizeX) * scaleX + vp.left + offsetX;
+    uint16_t scaledY = (this->_sizeY) * scaleY + vp.top;
 
     // base
-    if (this->_shape == GP_SHAPE_ELLIPSE) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
-
-        getRenderer()->drawEllipse(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor);
-    } else if (this->_shape == GP_SHAPE_SQUARE) {
-        uint16_t sizeX = (this->_sizeX) * scaleX + this->getViewport().left;
-        uint16_t sizeY = (this->_sizeY) * scaleY + this->getViewport().top;
-        uint16_t width = this->_sizeX - baseX;
-        uint16_t height = this->_sizeY - baseY;
-
-        getRenderer()->drawRectangle(baseX, baseY, sizeX+offsetX, sizeY, this->strokeColor, this->fillColor, this->_angle);
-    } else if (this->_shape == GP_SHAPE_LINE) {
-        getRenderer()->drawLine(baseX, baseY, this->_sizeX, this->_sizeY, this->strokeColor, 0);
-    } else if (this->_shape == GP_SHAPE_POLYGON) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
-
-        getRenderer()->drawPolygon(baseX, baseY, baseRadius, this->_sizeY, this->strokeColor, this->fillColor, this->_angle);
-    } else if (this->_shape == GP_SHAPE_ARC) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
-
-        getRenderer()->drawArc(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor, this->_angle, this->_angleEnd, this->_closed);
-    } else if (this->_shape == GP_SHAPE_PILL) {
-        uint16_t sizeX = (this->_sizeX) * scaleX + this->getViewport().left;
-        uint16_t sizeY = (this->_sizeY) * scaleY + this->getViewport().top;
-        uint16_t width = this->_sizeX - baseX;
-        uint16_t height = this->_sizeY - baseY;
-
-        getRenderer()->drawPill(baseX, baseY, sizeX+offsetX, sizeY, this->strokeColor, this->fillColor, this->_angle);
+    switch (this->_shape) {
+        case GP_SHAPE_ELLIPSE:
+            getRenderer()->drawEllipse(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor);
+            break;
+        case GP_SHAPE_SQUARE:
+            getRenderer()->drawRectangle(baseX, baseY, scaledX, scaledY, this->strokeColor, this->fillColor,
+                                         this->_angle);
+            break;
+        case GP_SHAPE_LINE:
+            getRenderer()->drawLine(baseX, baseY, this->_sizeX, this->_sizeY, this->strokeColor, 0);
+            break;
+        case GP_SHAPE_POLYGON:
+            getRenderer()->drawPolygon(baseX, baseY, baseRadius, this->_sizeY, this->strokeColor, this->fillColor,
+                                       this->_angle);
+            break;
+        case GP_SHAPE_ARC:
+            getRenderer()->drawArc(baseX, baseY, baseRadius, baseRadius, this->strokeColor, this->fillColor,
+                                   this->_angle, this->_angleEnd, this->_closed);
+            break;
+        case GP_SHAPE_PILL:
+            getRenderer()->drawPill(baseX, baseY, scaledX, scaledY, this->strokeColor, this->fillColor, this->_angle);
+            break;
     }
 }

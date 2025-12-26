@@ -5,6 +5,7 @@ void GPButton::draw() {
     // new style button:
     uint16_t baseX = this->x;
     uint16_t baseY = this->y;
+
     Mask_t pinValues = ~gpio_get_all();
 
     // scale to viewport
@@ -18,8 +19,13 @@ void GPButton::draw() {
         scaleX = scaleY;
     }
 
-    uint16_t offsetX = ((getRenderer()->getDriver()->getMetrics()->width - (uint16_t)((double)(this->getViewport().right - this->getViewport().left) * scaleX)) / 2);
-    uint16_t offsetY = ((getRenderer()->getDriver()->getMetrics()->height - (uint16_t)((double)(this->getViewport().bottom - this->getViewport().top) * scaleY)) / 2);
+    uint16_t width   = getRenderer()->getDriver()->getMetrics()->width;
+    uint16_t hscale  = (uint16_t)((double)(this->getViewport().right - this->getViewport().left) * scaleX);
+    uint16_t offsetX = (width - hscale) / 2;
+
+    uint16_t height  = getRenderer()->getDriver()->getMetrics()->height;
+    uint16_t vscale  = (uint16_t)((double)(this->getViewport().bottom - this->getViewport().top) * scaleY);
+    uint16_t offsetY = (height - vscale) / 2;
 
     if (scaleX > 0.0f) {
         baseX = ((this->x) * scaleX + this->getViewport().left) + offsetX;
@@ -29,20 +35,22 @@ void GPButton::draw() {
         baseY = ((this->y) * scaleY + this->getViewport().top);
     }
 
-    bool pinState = false;
-    bool buttonState = false;
-    bool turboState = false;
-    uint16_t state = 0;
-    int16_t setPin = -1;
+    bool pinState      = false;
+    bool buttonState   = false;
+    bool turboState    = false;
+    uint16_t state     = 0;
+    int16_t setPin     = -1;
     int32_t maskedPins = 0;
-    bool useMask = false;
-    GamepadButtonMapping *mapMask = NULL;
-    GpioMappingInfo* pinMappings = Storage::getInstance().getProfilePinMappings();
+    bool useMask       = false;
 
+    GamepadButtonMapping* mapMask = NULL;
+    GpioMappingInfo* pinMappings  = Storage::getInstance().getProfilePinMappings();
+
+    // TODO: something to do here?
     if (_inputType == GP_ELEMENT_BTN_BUTTON) {
         // button mask
         buttonState = getProcessedGamepad()->pressedButton(this->_inputMask);
-        useMask = true;
+        useMask     = true;
 
         if ((this->_inputMask & GAMEPAD_MASK_B1) == GAMEPAD_MASK_B1) {
             mapMask = getGamepad()->mapButtonB1;
@@ -77,7 +85,7 @@ void GPButton::draw() {
     } else if (_inputType == GP_ELEMENT_DIR_BUTTON) {
         // direction button mask
         buttonState = getProcessedGamepad()->pressedDpad(this->_inputMask);
-        useMask = true;
+        useMask     = true;
 
         if ((this->_inputMask & GAMEPAD_MASK_UP) == GAMEPAD_MASK_UP) {
             mapMask = getGamepad()->mapDpadUp;
@@ -90,7 +98,7 @@ void GPButton::draw() {
         }
     } else if (_inputType == GP_ELEMENT_PIN_BUTTON) {
         // physical pin
-        pinState = ((pinValues >> this->_inputMask) & 0x01);
+        pinState    = ((pinValues >> this->_inputMask) & 0x01);
         buttonState = true;
 
         switch (pinMappings[this->_inputMask].action) {
@@ -108,7 +116,7 @@ void GPButton::draw() {
             case GpioAction::BUTTON_PRESS_A2: turboState |= (getGamepad()->turboState.buttons & GAMEPAD_MASK_A2); break;
             case GpioAction::BUTTON_PRESS_L3: turboState |= (getGamepad()->turboState.buttons & GAMEPAD_MASK_L3); break;
             case GpioAction::BUTTON_PRESS_R3: turboState |= (getGamepad()->turboState.buttons & GAMEPAD_MASK_R3); break;
-            default: break;
+            default                         : break;
         }
     }
 
@@ -130,51 +138,63 @@ void GPButton::draw() {
 
     // base
     if (this->_shape == GP_SHAPE_ELLIPSE) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
+        uint16_t scaledSize  = (uint16_t)((double)this->_sizeX * scaleX);
+        uint16_t baseRadius  = (uint16_t)scaledSize;
         uint16_t turboRadius = (uint16_t)scaledSize * GP_BUTTON_TURBO_SCALE;
 
         getRenderer()->drawEllipse(baseX, baseY, baseRadius, baseRadius, this->strokeColor, state);
-        if (turboState) getRenderer()->drawEllipse(baseX, baseY, turboRadius, turboRadius, 1, 0);
+        if (turboState) {
+            getRenderer()->drawEllipse(baseX, baseY, turboRadius, turboRadius, 1, 0);
+        }
     } else if (this->_shape == GP_SHAPE_SQUARE) {
-        uint16_t sizeX = (this->_sizeX) * scaleX + this->getViewport().left;
-        uint16_t sizeY = (this->_sizeY) * scaleY + this->getViewport().top;
-        uint16_t width = sizeX - baseX;
+        uint16_t sizeX  = (this->_sizeX) * scaleX + this->getViewport().left;
+        uint16_t sizeY  = (this->_sizeY) * scaleY + this->getViewport().top;
+        uint16_t width  = sizeX - baseX;
         uint16_t height = sizeY - baseY;
         uint16_t turboW = (uint16_t)round(width * GP_BUTTON_TURBO_SCALE);
         uint16_t turboH = (uint16_t)round(height * GP_BUTTON_TURBO_SCALE);
         uint16_t turboX = baseX + (width - turboW) / 2;
         uint16_t turboY = baseY + (height - turboH) / 2;
 
-        getRenderer()->drawRectangle(baseX, baseY, sizeX+offsetX, sizeY, this->strokeColor, state, this->_angle);
-        if (turboState) getRenderer()->drawRectangle(turboX, turboY, turboX+turboW, turboY+turboH, 1, 0, this->_angle);
+        getRenderer()->drawRectangle(baseX, baseY, sizeX + offsetX, sizeY, this->strokeColor, state, this->_angle);
+        if (turboState) {
+            getRenderer()->drawRectangle(turboX, turboY, turboX + turboW, turboY + turboH, 1, 0, this->_angle);
+        }
     } else if (this->_shape == GP_SHAPE_LINE) {
         getRenderer()->drawLine(baseX, baseY, this->_sizeX, this->_sizeY, this->strokeColor, 0);
     } else if (this->_shape == GP_SHAPE_POLYGON) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
+        uint16_t scaledSize  = (uint16_t)((double)this->_sizeX * scaleX);
+        uint16_t baseRadius  = (uint16_t)scaledSize;
         uint16_t turboRadius = (uint16_t)scaledSize * GP_BUTTON_TURBO_SCALE;
 
         getRenderer()->drawPolygon(baseX, baseY, baseRadius, this->_sizeY, this->strokeColor, state, this->_angle);
-        if (turboState) getRenderer()->drawPolygon(baseX, baseY, turboRadius, this->_sizeY, 1, 0, this->_angle);
+        if (turboState) {
+            getRenderer()->drawPolygon(baseX, baseY, turboRadius, this->_sizeY, 1, 0, this->_angle);
+        }
     } else if (this->_shape == GP_SHAPE_ARC) {
-        uint16_t scaledSize = (uint16_t)((double)this->_sizeX * scaleX);
-        uint16_t baseRadius = (uint16_t)scaledSize;
+        uint16_t scaledSize  = (uint16_t)((double)this->_sizeX * scaleX);
+        uint16_t baseRadius  = (uint16_t)scaledSize;
         uint16_t turboRadius = (uint16_t)scaledSize * GP_BUTTON_TURBO_SCALE;
 
-        getRenderer()->drawArc(baseX, baseY, baseRadius, baseRadius, this->strokeColor, state, this->_angle, this->_angleEnd, this->_closed);
-        if (turboState) getRenderer()->drawArc(baseX, baseY, turboRadius, turboRadius, 1, 0, this->_angle, this->_angleEnd, this->_closed);
+        getRenderer()->drawArc(baseX, baseY, baseRadius, baseRadius, this->strokeColor, state, this->_angle,
+                               this->_angleEnd, this->_closed);
+        if (turboState) {
+            getRenderer()->drawArc(baseX, baseY, turboRadius, turboRadius, 1, 0, this->_angle, this->_angleEnd,
+                                   this->_closed);
+        }
     } else if (this->_shape == GP_SHAPE_PILL) {
-        uint16_t sizeX = (this->_sizeX) * scaleX + this->getViewport().left;
-        uint16_t sizeY = (this->_sizeY) * scaleY + this->getViewport().top;
-        uint16_t width = sizeX - baseX;
+        uint16_t sizeX  = (this->_sizeX) * scaleX + this->getViewport().left;
+        uint16_t sizeY  = (this->_sizeY) * scaleY + this->getViewport().top;
+        uint16_t width  = sizeX - baseX;
         uint16_t height = sizeY - baseY;
         uint16_t turboW = (uint16_t)round(width * GP_BUTTON_TURBO_SCALE);
         uint16_t turboH = (uint16_t)round(height * GP_BUTTON_TURBO_SCALE);
         uint16_t turboX = baseX + (width - turboW) / 2;
         uint16_t turboY = baseY + (height - turboH) / 2;
 
-        getRenderer()->drawPill(baseX, baseY, sizeX+offsetX, sizeY, this->strokeColor, state, this->_angle);
-        if (turboState) getRenderer()->drawPill(turboX, turboY, turboX+turboW, turboY+turboH, 1, 0, this->_angle);
+        getRenderer()->drawPill(baseX, baseY, sizeX + offsetX, sizeY, this->strokeColor, state, this->_angle);
+        if (turboState) {
+            getRenderer()->drawPill(turboX, turboY, turboX + turboW, turboY + turboH, 1, 0, this->_angle);
+        }
     }
 }

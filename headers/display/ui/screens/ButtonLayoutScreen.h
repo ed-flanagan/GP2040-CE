@@ -14,7 +14,7 @@
 #include "GPGFX_UI_widgets.h"
 #include "GPGFX_UI_layouts.h"
 
-#define INPUT_HISTORY_MAX_INPUTS 22
+#define INPUT_HISTORY_MAX_INPUTS 24
 #define INPUT_HISTORY_MAX_MODES 12
 
 // Static to ensure memory is never doubled

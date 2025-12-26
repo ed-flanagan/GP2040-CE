@@ -1,0 +1,71 @@
+﻿---
+BasedOnStyle: LLVM
+LineEnding: LF
+
+ColumnLimit: 80
+IndentWidth: 4
+
+AlignConsecutiveAssignments: true
+
+---
+Language: Cpp
+
+ColumnLimit: 120
+
+## v22 features
+# AlignAfterOpenBracket: true
+BreakAfterOpenBracketBracedList: true
+BreakBeforeCloseBracketBracedList: true
+
+# BinPackArguments: false
+BinPackLongBracedList: false
+# InsertTrailingCommas: Wrapped
+Cpp11BracedListStyle: AlignFirstComment
+PointerAlignment: Left
+ReferenceAlignment: Right
+RemoveEmptyLinesInUnwrappedLines: true
+SeparateDefinitionBlocks: Always
+# WhitespaceSensitiveMacros: ??
+AlignOperands: true
+# SkipMacroDefinitionBody: true
+
+InsertBraces: true
+InsertNewlineAtEOF: true
+MaxEmptyLinesToKeep: 1
+
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+  AlignCaseColons: true
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: LeftWithLastLine
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseExpressionOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+# AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Inline
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: None
+BreakBeforeTernaryOperators: true
+IndentCaseLabels: true
+SortIncludes: true
+SortUsingDeclarations: true
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+
+---
+Language: Proto
+
+ColumnLimit: 100
+
+# BreakBeforeBraces: Linux
+
+...

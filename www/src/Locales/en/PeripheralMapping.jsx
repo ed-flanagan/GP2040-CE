@@ -1,6 +1,6 @@
 export default {
 	'header-text': 'Peripheral Mapping',
-	'sub-header-text': '',
+	'sub-header-text': 'Much ado about peripheral mappings',
 	'pins-label': 'Pins',
 	'pin-in-use': 'in use',
 	'i2c-label': 'I\u00B2C',
